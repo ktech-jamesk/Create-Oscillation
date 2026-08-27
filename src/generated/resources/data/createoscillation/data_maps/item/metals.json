@@ -1,0 +1,20 @@
+{
+  "values": {
+    "create:raw_zinc": {
+      "colour": "#BFD6C9",
+      "metal": "zinc"
+    },
+    "minecraft:raw_copper": {
+      "colour": "#E0734D",
+      "metal": "copper"
+    },
+    "minecraft:raw_gold": {
+      "colour": "#FCEE4B",
+      "metal": "gold"
+    },
+    "minecraft:raw_iron": {
+      "colour": "#D8AF93",
+      "metal": "iron"
+    }
+  }
+}

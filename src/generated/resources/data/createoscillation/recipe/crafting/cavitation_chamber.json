@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "createoscillation:resonance_chamber"
+    },
+    {
+      "item": "create:brass_casing"
+    },
+    {
+      "item": "createoscillation:tuned_crystal_high"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "createoscillation:cavitation_chamber"
+  }
+}

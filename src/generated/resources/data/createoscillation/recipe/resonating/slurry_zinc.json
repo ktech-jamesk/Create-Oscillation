@@ -1,0 +1,24 @@
+{
+  "type": "createoscillation:resonating",
+  "frequency": "high",
+  "ingredients": [
+    {
+      "tag": "c:raw_materials/zinc"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 250,
+      "fluid": "minecraft:water"
+    }
+  ],
+  "processing_time": 200,
+  "results": [
+    {
+      "amount": 250,
+      "components": {
+        "createoscillation:metal": "zinc"
+      },
+      "id": "createoscillation:ore_slurry"
+    }
+  ]
+}

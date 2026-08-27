@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "create:andesite_alloy"
+    },
+    "B": {
+      "item": "minecraft:iron_bars"
+    },
+    "D": {
+      "item": "create:depot"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "pattern": [
+    "ABA",
+    "IDI"
+  ],
+  "result": {
+    "count": 1,
+    "id": "createoscillation:vibrating_sieve"
+  }
+}

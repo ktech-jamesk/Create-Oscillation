@@ -1,0 +1,19 @@
+{
+	"variants": {
+		"facing=down": {
+			"model": "createoscillation:block/cavitation_chamber/block"
+		},
+		"facing=east": {
+			"model": "createoscillation:block/cavitation_chamber/block"
+		},
+		"facing=north": {
+			"model": "createoscillation:block/cavitation_chamber/block"
+		},
+		"facing=south": {
+			"model": "createoscillation:block/cavitation_chamber/block"
+		},
+		"facing=west": {
+			"model": "createoscillation:block/cavitation_chamber/block"
+		}
+	}
+}

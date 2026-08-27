@@ -1,0 +1,297 @@
+{
+	"format_version": "1.21.11",
+	"credit": "Create: Oscillation resonance chamber (basin body after Create's basin, MIT)",
+	"parent": "block/block",
+	"texture_size": [
+		32,
+		32
+	],
+	"textures": {
+		"particle": "createoscillation:block/cavitation_chamber",
+		"body": "createoscillation:block/cavitation_chamber",
+		"glass": "createoscillation:block/resonance_chamber_glass"
+	},
+	"elements": [
+		{
+			"name": "Basin",
+			"from": [
+				0,
+				2,
+				0
+			],
+			"to": [
+				16,
+				9,
+				16
+			],
+			"faces": {
+				"north": {
+					"uv": [
+						0,
+						0,
+						8,
+						5
+					],
+					"texture": "#body"
+				},
+				"east": {
+					"uv": [
+						0,
+						0,
+						8,
+						5
+					],
+					"texture": "#body"
+				},
+				"south": {
+					"uv": [
+						0,
+						0,
+						8,
+						5
+					],
+					"texture": "#body"
+				},
+				"west": {
+					"uv": [
+						0,
+						0,
+						8,
+						5
+					],
+					"texture": "#body"
+				},
+				"up": {
+					"uv": [
+						0,
+						8,
+						8,
+						16
+					],
+					"texture": "#body"
+				},
+				"down": {
+					"uv": [
+						0,
+						8,
+						8,
+						16
+					],
+					"texture": "#body"
+				}
+			}
+		},
+		{
+			"name": "Basin Interior",
+			"from": [
+				1.95,
+				9,
+				1.95
+			],
+			"to": [
+				14.05,
+				2,
+				14.05
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [
+					0,
+					-3,
+					0
+				]
+			},
+			"faces": {
+				"north": {
+					"uv": [
+						9,
+						0,
+						15,
+						5
+					],
+					"rotation": 180,
+					"texture": "#body"
+				},
+				"east": {
+					"uv": [
+						9,
+						0,
+						15,
+						5
+					],
+					"rotation": 180,
+					"texture": "#body"
+				},
+				"south": {
+					"uv": [
+						9,
+						0,
+						15,
+						5
+					],
+					"rotation": 180,
+					"texture": "#body"
+				},
+				"west": {
+					"uv": [
+						9,
+						0,
+						15,
+						5
+					],
+					"rotation": 180,
+					"texture": "#body"
+				},
+				"up": {
+					"uv": [
+						9,
+						9,
+						15,
+						15
+					],
+					"rotation": 90,
+					"texture": "#body"
+				}
+			}
+		},
+		{
+			"name": "Basin Base",
+			"from": [
+				2,
+				0,
+				2
+			],
+			"to": [
+				14,
+				2,
+				14
+			],
+			"faces": {
+				"north": {
+					"uv": [
+						1,
+						7,
+						7,
+						8
+					],
+					"texture": "#body"
+				},
+				"east": {
+					"uv": [
+						1,
+						7,
+						7,
+						8
+					],
+					"texture": "#body"
+				},
+				"south": {
+					"uv": [
+						1,
+						7,
+						7,
+						8
+					],
+					"texture": "#body"
+				},
+				"west": {
+					"uv": [
+						1,
+						7,
+						7,
+						8
+					],
+					"texture": "#body"
+				},
+				"down": {
+					"uv": [
+						9,
+						9,
+						15,
+						15
+					],
+					"texture": "#body"
+				}
+			}
+		},
+		{
+			"name": "Dome 1",
+			"from": [
+				1,
+				9,
+				1
+			],
+			"to": [
+				15,
+				16,
+				15
+			],
+			"rotation": {
+				"angle": 0,
+				"axis": "y",
+				"origin": [
+					0,
+					-3,
+					0
+				]
+			},
+			"faces": {
+				"north": {
+					"uv": [
+						0,
+						8,
+						8,
+						11.5
+					],
+					"texture": "#glass"
+				},
+				"east": {
+					"uv": [
+						0,
+						8,
+						8,
+						11.5
+					],
+					"texture": "#glass"
+				},
+				"south": {
+					"uv": [
+						0,
+						8,
+						8,
+						11.5
+					],
+					"texture": "#glass"
+				},
+				"west": {
+					"uv": [
+						0,
+						8,
+						8,
+						11.5
+					],
+					"texture": "#glass"
+				},
+				"up": {
+					"uv": [
+						8,
+						7,
+						0,
+						0
+					],
+					"texture": "#glass"
+				},
+				"down": {
+					"uv": [
+						7,
+						0,
+						0,
+						7
+					],
+					"texture": "#glass"
+				}
+			}
+		}
+	]
+}

@@ -1,0 +1,34 @@
+{
+  "type": "createoscillation:condensing",
+  "ingredients": [
+    {
+      "type": "neoforge:components",
+      "amount": 250,
+      "components": {
+        "createoscillation:metal": "iron"
+      },
+      "fluids": "createoscillation:metal_vapour"
+    }
+  ],
+  "processing_time": 100,
+  "results": [
+    {
+      "components": {
+        "createoscillation:metal": "iron"
+      },
+      "count": 2,
+      "id": "createoscillation:metal_concentrate"
+    },
+    {
+      "chance": 0.5,
+      "components": {
+        "createoscillation:metal": "iron"
+      },
+      "id": "createoscillation:metal_concentrate"
+    },
+    {
+      "amount": 250,
+      "id": "minecraft:water"
+    }
+  ]
+}

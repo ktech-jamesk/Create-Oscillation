@@ -1,0 +1,10 @@
+{
+  "values": [
+    "createoscillation:flowing_steam",
+    "createoscillation:steam",
+    "createoscillation:flowing_quartz_vapour",
+    "createoscillation:quartz_vapour",
+    "createoscillation:flowing_metal_vapour",
+    "createoscillation:metal_vapour"
+  ]
+}

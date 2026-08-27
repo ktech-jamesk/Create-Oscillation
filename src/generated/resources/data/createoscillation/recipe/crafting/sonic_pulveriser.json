@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "create:brass_ingot"
+    },
+    "C": {
+      "item": "create:brass_casing"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "R": {
+      "item": "createoscillation:resonator"
+    },
+    "S": {
+      "item": "create:shaft"
+    }
+  },
+  "pattern": [
+    "IRI",
+    "BCB",
+    " S "
+  ],
+  "result": {
+    "count": 1,
+    "id": "createoscillation:sonic_pulveriser"
+  }
+}

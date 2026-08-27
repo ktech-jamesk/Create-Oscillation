@@ -1,0 +1,115 @@
+{
+	"format_version": "1.21.11",
+	"credit": "Create: Oscillation resonance chamber (basin body after Create's basin, MIT)",
+	"parent": "block/block",
+	"texture_size": [32, 32],
+	"textures": {
+		"particle": "createoscillation:block/resonance_chamber",
+		"body": "createoscillation:block/resonance_chamber",
+		"canal": "createoscillation:block/resonance_chamber_canal",
+		"glass": "createoscillation:block/resonance_chamber_glass"
+	},
+	"elements": [
+		{
+			"name": "Dome 1",
+			"from": [1, 9, 1],
+			"to": [15, 16, 15],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, -3, 0]},
+			"faces": {
+				"north": {"uv": [0, 8, 8, 11.5], "texture": "#glass"},
+				"east": {"uv": [0, 8, 8, 11.5], "texture": "#glass"},
+				"south": {"uv": [0, 8, 8, 11.5], "texture": "#glass"},
+				"west": {"uv": [0, 8, 8, 11.5], "texture": "#glass"},
+				"up": {"uv": [8, 7, 0, 0], "texture": "#glass"},
+				"down": {"uv": [7, 0, 0, 7], "texture": "#glass"}
+			}
+		},
+		{
+			"name": "Basin Base",
+			"from": [2, 0, 2],
+			"to": [14, 2, 14],
+			"faces": {
+				"north": {"uv": [1, 7, 7, 8], "texture": "#body"},
+				"east": {"uv": [1, 7, 7, 8], "texture": "#body"},
+				"south": {"uv": [1, 7, 7, 8], "texture": "#body"},
+				"west": {"uv": [1, 7, 7, 8], "texture": "#body"},
+				"down": {"uv": [9, 9, 15, 15], "texture": "#body"}
+			}
+		},
+		{
+			"name": "Basin Interior",
+			"from": [1.95, 9, 1.95],
+			"to": [14.05, 2, 14.05],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, -3, 0]},
+			"faces": {
+				"north": {"uv": [9, 0, 15, 5], "rotation": 180, "texture": "#body"},
+				"east": {"uv": [9, 0, 15, 5], "rotation": 180, "texture": "#body"},
+				"south": {"uv": [9, 0, 15, 5], "rotation": 180, "texture": "#body"},
+				"west": {"uv": [9, 0, 15, 5], "rotation": 180, "texture": "#body"},
+				"up": {"uv": [9, 9, 15, 15], "rotation": 90, "texture": "#body"}
+			}
+		},
+		{
+			"name": "Basin",
+			"from": [0, 2, 0],
+			"to": [16, 9, 16],
+			"faces": {
+				"north": {"uv": [0, 0, 8, 5], "texture": "#body"},
+				"east": {"uv": [0, 0, 8, 5], "texture": "#body"},
+				"south": {"uv": [0, 0, 8, 5], "texture": "#body"},
+				"west": {"uv": [0, 0, 8, 5], "texture": "#body"},
+				"up": {"uv": [0, 8, 8, 16], "texture": "#body"},
+				"down": {"uv": [0, 8, 8, 16], "texture": "#body"}
+			}
+		},
+		{
+			"from": [3, 2, 14],
+			"to": [13, 8, 17],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 2, 0]},
+			"faces": {
+				"east": {"uv": [13, 10, 10, 0], "rotation": 180, "texture": "#canal"},
+				"south": {"uv": [0, 0, 10, 10], "texture": "#canal"},
+				"west": {"uv": [10, 10, 13, 0], "rotation": 180, "texture": "#canal"},
+				"up": {"uv": [0, 10, 10, 13], "texture": "#canal"},
+				"down": {"uv": [13, 0, 16, 10], "rotation": 90, "texture": "#canal"}
+			}
+		},
+		{
+			"from": [4, 3, 13],
+			"to": [12, 7, 22],
+			"rotation": {"angle": 22.5, "axis": "x", "origin": [1, 11, 17]},
+			"faces": {
+				"north": {"uv": [1, 1, 9, 9], "texture": "#canal"},
+				"east": {"uv": [1, 8, 9, 16], "rotation": 90, "texture": "#canal"},
+				"south": {"uv": [1, 1, 9, 10], "texture": "#canal"},
+				"west": {"uv": [9, 8, 1, 16], "rotation": 270, "texture": "#canal"},
+				"up": {"uv": [1, 8, 9, 16], "texture": "#canal"},
+				"down": {"uv": [1, 8, 9, 16], "rotation": 180, "texture": "#canal"}
+			}
+		},
+		{
+			"from": [5, 4, 22],
+			"to": [11, 7, 21],
+			"rotation": {"angle": 22.5, "axis": "x", "origin": [1, 11, 17]},
+			"faces": {
+				"east": {"uv": [15, 1, 16, 9], "texture": "#canal"},
+				"south": {"uv": [10, 10, 16, 16], "texture": "#canal"},
+				"west": {"uv": [15, 1, 16, 9], "texture": "#canal"},
+				"up": {"uv": [15, 1, 16, 9], "rotation": 90, "texture": "#canal"},
+				"down": {"uv": [15, 1, 16, 9], "rotation": 90, "texture": "#canal"}
+			}
+		},
+		{
+			"from": [5, 5.64387, 12.73569],
+			"to": [11, 7.64387, 11.73569],
+			"rotation": {"angle": 22.5, "axis": "x", "origin": [8, 8.64387, 12.23569]},
+			"faces": {
+				"north": {"uv": [10, 10, 16, 16], "rotation": 180, "texture": "#canal"},
+				"east": {"uv": [15, 1, 16, 9], "rotation": 180, "texture": "#canal"},
+				"west": {"uv": [15, 1, 16, 9], "rotation": 180, "texture": "#canal"},
+				"up": {"uv": [15, 1, 16, 9], "rotation": 90, "texture": "#canal"},
+				"down": {"uv": [15, 1, 16, 9], "rotation": 90, "texture": "#canal"}
+			}
+		}
+	]
+}

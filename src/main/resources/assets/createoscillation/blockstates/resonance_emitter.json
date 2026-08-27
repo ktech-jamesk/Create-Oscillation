@@ -1,0 +1,19 @@
+{
+	"variants": {
+		"facing=north": {
+			"model": "createoscillation:block/resonance_emitter/block"
+		},
+		"facing=east": {
+			"model": "createoscillation:block/resonance_emitter/block",
+			"y": 90
+		},
+		"facing=south": {
+			"model": "createoscillation:block/resonance_emitter/block",
+			"y": 180
+		},
+		"facing=west": {
+			"model": "createoscillation:block/resonance_emitter/block",
+			"y": 270
+		}
+	}
+}

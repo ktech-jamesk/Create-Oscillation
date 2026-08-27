@@ -1,0 +1,7 @@
+{
+	"parent": "minecraft:item/generated",
+	"textures": {
+		"layer0": "createoscillation:item/metal_concentrate",
+		"layer1": "createoscillation:item/metal_concentrate_tint"
+	}
+}

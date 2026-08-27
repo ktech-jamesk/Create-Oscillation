@@ -1,0 +1,27 @@
+{
+  "type": "createoscillation:sifting",
+  "ingredients": [
+    {
+      "item": "minecraft:gravel"
+    }
+  ],
+  "processing_time": 120,
+  "results": [
+    {
+      "chance": 0.3,
+      "id": "minecraft:flint"
+    },
+    {
+      "chance": 0.12,
+      "id": "minecraft:iron_nugget"
+    },
+    {
+      "chance": 0.12,
+      "id": "create:copper_nugget"
+    },
+    {
+      "chance": 0.08,
+      "id": "create:zinc_nugget"
+    }
+  ]
+}

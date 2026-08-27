@@ -1,0 +1,27 @@
+{
+	"variants": {
+		"facing=south": {
+			"model": "createoscillation:block/resonance_receiver/block"
+		},
+		"facing=west": {
+			"model": "createoscillation:block/resonance_receiver/block",
+			"y": 90
+		},
+		"facing=north": {
+			"model": "createoscillation:block/resonance_receiver/block",
+			"y": 180
+		},
+		"facing=east": {
+			"model": "createoscillation:block/resonance_receiver/block",
+			"y": 270
+		},
+		"facing=up": {
+			"model": "createoscillation:block/resonance_receiver/block",
+			"x": 270
+		},
+		"facing=down": {
+			"model": "createoscillation:block/resonance_receiver/block",
+			"x": 90
+		}
+	}
+}

@@ -1,0 +1,29 @@
+{
+  "type": "createoscillation:cavitating",
+  "frequency": "ultrasonic",
+  "ingredients": [
+    {
+      "type": "neoforge:components",
+      "amount": 250,
+      "components": {
+        "createoscillation:metal": "copper"
+      },
+      "fluids": "createoscillation:ore_slurry"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 250,
+      "fluid": "createoscillation:steam"
+    }
+  ],
+  "processing_time": 200,
+  "results": [
+    {
+      "amount": 250,
+      "components": {
+        "createoscillation:metal": "copper"
+      },
+      "id": "createoscillation:metal_vapour"
+    }
+  ]
+}

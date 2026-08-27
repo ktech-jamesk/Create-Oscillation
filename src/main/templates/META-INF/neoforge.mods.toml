@@ -1,0 +1,47 @@
+modLoader="javafml"
+loaderVersion="${loader_version_range}"
+license="${mod_license}"
+issueTrackerURL="https://github.com/ktech-jamesk/Create-Oscillation"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+logoFile="icon.png"
+authors="jamoss"
+credits="Textures and models adapted from Create (MIT) by the Creators of Create"
+displayURL="https://github.com/ktech-jamesk/Create-Oscillation"
+description='''
+Vibration as energy, gases as a processing medium.
+
+Resonators turn rotation into frequency bands; Resonance Chambers cook gases; Condensers turn them back into liquids and solids.
+Tuned crystals power a wireless rotation link, a layer-breaking Sonic Pulveriser and a data-driven ore multiplication chain.
+'''
+
+[[dependencies.${mod_id}]]
+    modId="neoforge"
+    type="required"
+    versionRange="${neo_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="minecraft"
+    type="required"
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="create"
+    type="required"
+    versionRange="${create_version_range}"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="jei"
+    type="optional"
+    versionRange="[19,)"
+    ordering="AFTER"
+    side="CLIENT"

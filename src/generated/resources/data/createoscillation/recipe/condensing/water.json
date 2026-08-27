@@ -1,0 +1,17 @@
+{
+  "type": "createoscillation:condensing",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "amount": 250,
+      "fluid": "createoscillation:steam"
+    }
+  ],
+  "processing_time": 500,
+  "results": [
+    {
+      "amount": 250,
+      "id": "minecraft:water"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+	"variants": {
+		"": {
+			"model": "createoscillation:block/vibrating_sieve/block"
+		}
+	}
+}

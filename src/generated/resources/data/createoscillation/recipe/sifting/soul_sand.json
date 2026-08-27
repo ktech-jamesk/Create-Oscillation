@@ -1,0 +1,23 @@
+{
+  "type": "createoscillation:sifting",
+  "ingredients": [
+    {
+      "item": "minecraft:soul_sand"
+    }
+  ],
+  "processing_time": 160,
+  "results": [
+    {
+      "chance": 0.2,
+      "id": "minecraft:quartz"
+    },
+    {
+      "chance": 0.05,
+      "id": "minecraft:bone"
+    },
+    {
+      "chance": 0.02,
+      "id": "minecraft:glowstone_dust"
+    }
+  ]
+}

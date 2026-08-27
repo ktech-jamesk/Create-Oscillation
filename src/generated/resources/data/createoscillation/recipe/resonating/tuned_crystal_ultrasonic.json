@@ -1,0 +1,23 @@
+{
+  "type": "createoscillation:resonating",
+  "frequency": "ultrasonic",
+  "ingredients": [
+    {
+      "item": "createoscillation:tuned_crystal_high"
+    },
+    {
+      "item": "create:powdered_obsidian"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 250,
+      "fluid": "minecraft:water"
+    }
+  ],
+  "processing_time": 200,
+  "results": [
+    {
+      "id": "createoscillation:tuned_crystal_ultrasonic"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "type": "createoscillation:sifting",
+  "ingredients": [
+    {
+      "item": "minecraft:red_sand"
+    }
+  ],
+  "processing_time": 120,
+  "results": [
+    {
+      "chance": 0.06,
+      "id": "minecraft:gold_nugget"
+    },
+    {
+      "chance": 0.05,
+      "id": "minecraft:redstone"
+    },
+    {
+      "chance": 0.05,
+      "id": "minecraft:quartz"
+    }
+  ]
+}

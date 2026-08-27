@@ -1,0 +1,7 @@
+{
+  "parent": "create:block/fluid_tank/block_middle",
+  "textures": {
+    "1": "createoscillation:block/condenser",
+    "particle": "createoscillation:block/condenser"
+  }
+}

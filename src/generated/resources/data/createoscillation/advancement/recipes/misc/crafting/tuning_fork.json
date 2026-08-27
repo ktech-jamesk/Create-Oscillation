@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "createoscillation:crafting/tuning_fork"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_tuned_crystal": {
+      "conditions": {
+        "items": [
+          {
+            "items": "createoscillation:tuned_crystal_mid"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_tuned_crystal"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "createoscillation:crafting/tuning_fork"
+    ]
+  }
+}

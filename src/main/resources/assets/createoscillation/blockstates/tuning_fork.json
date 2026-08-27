@@ -1,0 +1,7 @@
+{
+	"variants": {
+		"": {
+			"model": "createoscillation:block/tuning_fork/block"
+		}
+	}
+}

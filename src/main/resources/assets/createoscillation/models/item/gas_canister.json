@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "createoscillation:item/gas_canister",
+    "layer1": "createoscillation:item/gas_canister_window"
+  }
+}

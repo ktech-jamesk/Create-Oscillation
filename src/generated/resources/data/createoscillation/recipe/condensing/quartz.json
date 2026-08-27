@@ -1,0 +1,24 @@
+{
+  "type": "createoscillation:condensing",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "amount": 250,
+      "fluid": "createoscillation:quartz_vapour"
+    }
+  ],
+  "processing_time": 100,
+  "results": [
+    {
+      "id": "minecraft:quartz"
+    },
+    {
+      "chance": 0.5,
+      "id": "createoscillation:rough_quartz_crystal"
+    },
+    {
+      "amount": 250,
+      "id": "minecraft:water"
+    }
+  ]
+}

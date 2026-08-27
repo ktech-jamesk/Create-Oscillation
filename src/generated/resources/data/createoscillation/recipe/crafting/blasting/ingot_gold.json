@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 100,
+  "experience": 0.7,
+  "ingredient": {
+    "type": "neoforge:components",
+    "components": {
+      "createoscillation:metal": "gold"
+    },
+    "items": "createoscillation:metal_concentrate"
+  },
+  "result": {
+    "count": 1,
+    "id": "minecraft:gold_ingot"
+  }
+}

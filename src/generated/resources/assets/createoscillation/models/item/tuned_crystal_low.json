@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "createoscillation:item/tuned_crystal_low"
+  }
+}

@@ -1,0 +1,358 @@
+{
+	"credit": "Create: Oscillation",
+	"parent": "block/block",
+	"textures": {
+		"0": "createoscillation:block/oscillation_iron",
+		"3": "createoscillation:block/resonant_casing",
+		"4": "createoscillation:block/oscillation_brass_plate",
+		"5": "createoscillation:block/oscillation_brass",
+		"particle": "createoscillation:block/oscillation_iron"
+	},
+	"elements": [
+		{
+			"name": "Base bar",
+			"from": [
+				7,
+				2,
+				3.5
+			],
+			"to": [
+				9,
+				4.5,
+				12.5
+			],
+			"faces": {
+				"north": {
+					"uv": [
+						7,
+						11.5,
+						9,
+						14
+					],
+					"texture": "#3"
+				},
+				"east": {
+					"uv": [
+						3.5,
+						11.5,
+						12.5,
+						14
+					],
+					"texture": "#3"
+				},
+				"south": {
+					"uv": [
+						7,
+						11.5,
+						9,
+						14
+					],
+					"texture": "#3"
+				},
+				"west": {
+					"uv": [
+						3.5,
+						11.5,
+						12.5,
+						14
+					],
+					"texture": "#3"
+				},
+				"up": {
+					"uv": [
+						7,
+						3.5,
+						9,
+						12.5
+					],
+					"texture": "#3"
+				},
+				"down": {
+					"uv": [
+						7,
+						3.5,
+						9,
+						12.5
+					],
+					"texture": "#3"
+				}
+			}
+		},
+		{
+			"name": "Tine front",
+			"from": [
+				6.5,
+				4.5,
+				3.5
+			],
+			"to": [
+				9.5,
+				12,
+				5
+			],
+			"faces": {
+				"north": {
+					"uv": [
+						6.5,
+						4,
+						9.5,
+						11.5
+					],
+					"texture": "#4"
+				},
+				"east": {
+					"uv": [
+						3.5,
+						4,
+						5,
+						11.5
+					],
+					"texture": "#4"
+				},
+				"south": {
+					"uv": [
+						6.5,
+						4,
+						9.5,
+						11.5
+					],
+					"texture": "#4"
+				},
+				"west": {
+					"uv": [
+						3.5,
+						4,
+						5,
+						11.5
+					],
+					"texture": "#4"
+				},
+				"up": {
+					"uv": [
+						6.5,
+						3.5,
+						9.5,
+						5
+					],
+					"texture": "#4"
+				},
+				"down": {
+					"uv": [
+						6.5,
+						3.5,
+						9.5,
+						5
+					],
+					"texture": "#4"
+				}
+			}
+		},
+		{
+			"name": "Tine back",
+			"from": [
+				6.5,
+				4.5,
+				11
+			],
+			"to": [
+				9.5,
+				12,
+				12.5
+			],
+			"faces": {
+				"north": {
+					"uv": [
+						6.5,
+						4,
+						9.5,
+						11.5
+					],
+					"texture": "#4"
+				},
+				"east": {
+					"uv": [
+						11,
+						4,
+						12.5,
+						11.5
+					],
+					"texture": "#4"
+				},
+				"south": {
+					"uv": [
+						6.5,
+						4,
+						9.5,
+						11.5
+					],
+					"texture": "#4"
+				},
+				"west": {
+					"uv": [
+						11,
+						4,
+						12.5,
+						11.5
+					],
+					"texture": "#4"
+				},
+				"up": {
+					"uv": [
+						6.5,
+						11,
+						9.5,
+						12.5
+					],
+					"texture": "#4"
+				},
+				"down": {
+					"uv": [
+						6.5,
+						11,
+						9.5,
+						12.5
+					],
+					"texture": "#4"
+				}
+			}
+		},
+		{
+			"name": "Tine cap front",
+			"from": [
+				6,
+				12,
+				3
+			],
+			"to": [
+				10,
+				13,
+				5.5
+			],
+			"faces": {
+				"north": {
+					"uv": [
+						6,
+						3,
+						10,
+						4
+					],
+					"texture": "#4"
+				},
+				"east": {
+					"uv": [
+						3,
+						3,
+						5.5,
+						4
+					],
+					"texture": "#4"
+				},
+				"south": {
+					"uv": [
+						6,
+						3,
+						10,
+						4
+					],
+					"texture": "#4"
+				},
+				"west": {
+					"uv": [
+						3,
+						3,
+						5.5,
+						4
+					],
+					"texture": "#4"
+				},
+				"up": {
+					"uv": [
+						6,
+						3,
+						10,
+						5.5
+					],
+					"texture": "#4"
+				},
+				"down": {
+					"uv": [
+						6,
+						3,
+						10,
+						5.5
+					],
+					"texture": "#4"
+				}
+			}
+		},
+		{
+			"name": "Tine cap back",
+			"from": [
+				6,
+				12,
+				10.5
+			],
+			"to": [
+				10,
+				13,
+				13
+			],
+			"faces": {
+				"north": {
+					"uv": [
+						6,
+						3,
+						10,
+						4
+					],
+					"texture": "#4"
+				},
+				"east": {
+					"uv": [
+						10.5,
+						3,
+						13,
+						4
+					],
+					"texture": "#4"
+				},
+				"south": {
+					"uv": [
+						6,
+						3,
+						10,
+						4
+					],
+					"texture": "#4"
+				},
+				"west": {
+					"uv": [
+						10.5,
+						3,
+						13,
+						4
+					],
+					"texture": "#4"
+				},
+				"up": {
+					"uv": [
+						6,
+						10.5,
+						10,
+						13
+					],
+					"texture": "#4"
+				},
+				"down": {
+					"uv": [
+						6,
+						10.5,
+						10,
+						13
+					],
+					"texture": "#4"
+				}
+			}
+		}
+	]
+}

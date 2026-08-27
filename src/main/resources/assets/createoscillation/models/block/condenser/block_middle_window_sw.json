@@ -1,0 +1,8 @@
+{
+  "parent": "create:block/fluid_tank/block_middle_window_sw",
+  "textures": {
+    "1": "createoscillation:block/condenser",
+    "3": "createoscillation:block/condenser_window",
+    "particle": "createoscillation:block/condenser"
+  }
+}

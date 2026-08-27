@@ -1,0 +1,15 @@
+{
+  "values": [
+    "createoscillation:resonance_chamber",
+    "createoscillation:resonator",
+    "createoscillation:resonance_pump",
+    "createoscillation:condenser",
+    "createoscillation:vibrating_sieve",
+    "createoscillation:vent",
+    "createoscillation:tuning_fork",
+    "createoscillation:cavitation_chamber",
+    "createoscillation:resonance_emitter",
+    "createoscillation:resonance_receiver",
+    "createoscillation:sonic_pulveriser"
+  ]
+}

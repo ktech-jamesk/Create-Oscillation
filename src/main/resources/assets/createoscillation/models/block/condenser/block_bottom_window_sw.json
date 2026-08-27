@@ -1,0 +1,10 @@
+{
+  "parent": "create:block/fluid_tank/block_bottom_window_sw",
+  "textures": {
+    "0": "createoscillation:block/condenser_top",
+    "1": "createoscillation:block/condenser",
+    "3": "createoscillation:block/condenser_window",
+    "4": "createoscillation:block/condenser_inner",
+    "particle": "createoscillation:block/condenser"
+  }
+}

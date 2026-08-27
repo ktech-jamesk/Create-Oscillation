@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_high_crystal": {
+      "conditions": {
+        "items": [
+          {
+            "items": "createoscillation:tuned_crystal_high"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "createoscillation:crafting/cavitation_chamber"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_high_crystal"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "createoscillation:crafting/cavitation_chamber"
+    ]
+  }
+}

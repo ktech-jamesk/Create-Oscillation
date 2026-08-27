@@ -1,0 +1,82 @@
+{
+	"format_version": "1.21.11",
+	"credit": "Create: Oscillation",
+	"parent": "block/block",
+	"textures": {
+		"0": "createoscillation:block/oscillation_iron",
+		"3": "createoscillation:block/resonant_casing",
+		"4": "createoscillation:block/oscillation_brass_plate",
+		"particle": "createoscillation:block/oscillation_iron"
+	},
+	"elements": [
+		{
+			"name": "Base",
+			"from": [
+				0,
+				0,
+				0
+			],
+			"to": [
+				16,
+				3,
+				16
+			],
+			"faces": {
+				"north": {
+					"uv": [
+						0,
+						13,
+						16,
+						16
+					],
+					"texture": "#0"
+				},
+				"east": {
+					"uv": [
+						0,
+						13,
+						16,
+						16
+					],
+					"texture": "#0"
+				},
+				"south": {
+					"uv": [
+						0,
+						13,
+						16,
+						16
+					],
+					"texture": "#0"
+				},
+				"west": {
+					"uv": [
+						0,
+						13,
+						16,
+						16
+					],
+					"texture": "#0"
+				},
+				"up": {
+					"uv": [
+						0,
+						0,
+						16,
+						16
+					],
+					"texture": "#0"
+				},
+				"down": {
+					"uv": [
+						0,
+						0,
+						16,
+						16
+					],
+					"texture": "#0"
+				}
+			}
+		}
+	]
+}

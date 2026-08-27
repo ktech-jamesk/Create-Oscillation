@@ -1,0 +1,47 @@
+{
+	"credit": "Create: Oscillation",
+	"parent": "block/block",
+	"textures": {
+		"0": "createoscillation:block/oscillation_iron",
+		"1": "createoscillation:block/oscillation_brass",
+		"2": "createoscillation:block/oscillation_dark",
+		"3": "createoscillation:block/resonant_casing",
+		"4": "createoscillation:block/sieve_mesh",
+		"particle": "createoscillation:block/oscillation_iron"
+	},
+	"elements": [
+		{
+			"name": "Mesh",
+			"from": [
+				1.5,
+				7,
+				1.5
+			],
+			"to": [
+				14.5,
+				7.5,
+				14.5
+			],
+			"faces": {
+				"up": {
+					"uv": [
+						1.5,
+						1.5,
+						14.5,
+						14.5
+					],
+					"texture": "#4"
+				},
+				"down": {
+					"uv": [
+						1.5,
+						1.5,
+						14.5,
+						14.5
+					],
+					"texture": "#4"
+				}
+			}
+		}
+	]
+}

@@ -1,0 +1,21 @@
+{
+  "type": "createoscillation:resonating",
+  "frequency": "mid",
+  "ingredients": [
+    {
+      "item": "minecraft:quartz"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 250,
+      "fluid": "minecraft:water"
+    }
+  ],
+  "processing_time": 100,
+  "results": [
+    {
+      "amount": 250,
+      "id": "createoscillation:quartz_vapour"
+    }
+  ]
+}
