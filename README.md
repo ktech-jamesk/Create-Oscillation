@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="logo.png" alt="Create: Oscillation" width="720">
+<img src="logo.gif" alt="Create: Oscillation" width="720">
 
 **Vibration as energy. Gases as a processing medium.**
 

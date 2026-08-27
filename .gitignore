@@ -42,3 +42,4 @@ repo/
 ### Private working notes (kept locally, never committed) ###
 STATE.md
 docs/
+src/main/resources/assets/createoscillation/models/block/logo.json
