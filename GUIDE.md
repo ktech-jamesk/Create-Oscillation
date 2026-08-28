@@ -107,7 +107,7 @@ No code needed:
 
 ## Compatibility
 
-- **Create 6.0.11+** required (Registrate, Ponder and Flywheel come with it).
+- **Create 6.0.10+** required (Registrate, Ponder and Flywheel come with it).
 - **JEI** optional: Resonating, Cavitating, Condensing and Sifting categories with the required band shown.
 
 Released under the MIT License. Some textures are recoloured from Create's, and the Resonance Pump reuses Create's mechanical pump geometry — thank you to the Creators of Create.

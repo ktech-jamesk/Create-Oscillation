@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.2
+
+- Now builds against and requires Create 6.0.10+ (was 6.0.11+, which is not yet released). Nothing else changed;
+  the mod runs on 6.0.11 too.
+
 ## 1.0.1
 
 - Pipes and pumps can no longer drain a Resonance/Cavitation Chamber's *input* fluids; only outputs are extractable.

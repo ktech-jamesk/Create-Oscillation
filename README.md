@@ -9,7 +9,7 @@ An addon for [Create](https://github.com/Creators-of-Create/Create) that turns r
 [![CurseForge](https://img.shields.io/badge/CurseForge-Create%3A%20Oscillation-f16436?style=flat-square&logo=curseforge&logoColor=white)](https://www.curseforge.com/minecraft/mc-mods/create-oscillation)
 ![Minecraft 1.21.1](https://img.shields.io/badge/Minecraft-1.21.1-5b8c3a?style=flat-square)
 ![NeoForge](https://img.shields.io/badge/NeoForge-21.1%2B-e46a2e?style=flat-square)
-![Create 6.0.11+](https://img.shields.io/badge/Create-6.0.11%2B-c8a24b?style=flat-square)
+![Create 6.0.10+](https://img.shields.io/badge/Create-6.0.10%2B-c8a24b?style=flat-square)
 ![License MIT](https://img.shields.io/badge/License-MIT-3f8fd6?style=flat-square)
 
 </div>
@@ -37,7 +37,7 @@ Every block has a Ponder scene (hover the item, press <kbd>W</kbd>).
 - **[CurseForge](https://www.curseforge.com/minecraft/mc-mods/create-oscillation)**
 - [GitHub Releases](https://github.com/ktech-jamesk/Create-Oscillation/releases)
 
-Requires Create 6.0.11+ on NeoForge for Minecraft 1.21.1. JEI is optional but recommended.
+Requires Create 6.0.10+ on NeoForge for Minecraft 1.21.1. JEI is optional but recommended.
 
 ## Building from source
 
