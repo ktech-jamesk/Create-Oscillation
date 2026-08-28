@@ -4,7 +4,7 @@
     {
       "type": "neoforge:single",
       "amount": 250,
-      "fluid": "createoscillation:steam"
+      "fluid": "createoscillation:sonic_mist"
     }
   ],
   "processing_time": 500,

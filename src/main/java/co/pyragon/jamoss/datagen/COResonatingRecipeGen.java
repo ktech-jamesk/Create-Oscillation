@@ -23,8 +23,8 @@ import net.minecraft.world.level.material.Fluids;
 
 public class COResonatingRecipeGen extends ProcessingRecipeGen<ProcessingRecipeParams, ResonatingRecipe, ResonatingRecipeBuilder> {
 
-	GeneratedRecipe STEAM = create("steam", b -> b.require(Fluids.WATER, 250)
-		.output(COFluids.STEAM.get(), 250)
+	GeneratedRecipe SONIC_MIST = create("sonic_mist", b -> b.require(Fluids.WATER, 250)
+		.output(COFluids.SONIC_MIST.get(), 250)
 		.duration(100)
 		.frequency(FrequencyBand.LOW));
 

@@ -21,10 +21,10 @@ public class COFluids {
 	private static final ResourceLocation GAS_FLOW = CreateOscillation.asResource("block/gas_flow");
 	public static final int GAS_ALPHA = 0xFF; // transparency comes from the wisp texture itself
 
-	public static final FluidEntry<VirtualFluid> STEAM = CreateOscillation.REGISTRATE
-		.virtualFluid("steam", GAS_STILL, GAS_FLOW, GasFluidType.of(0xDDE6EA),
+	public static final FluidEntry<VirtualFluid> SONIC_MIST = CreateOscillation.REGISTRATE
+		.virtualFluid("sonic_mist", GAS_STILL, GAS_FLOW, GasFluidType.of(0xDDE6EA),
 			VirtualFluid::createSource, VirtualFluid::createFlowing)
-		.lang("Steam")
+		.lang("Sonic Mist")
 		.properties(p -> p
 			.density(-500) // negative density => FluidType#isLighterThanAir
 			.viscosity(100)

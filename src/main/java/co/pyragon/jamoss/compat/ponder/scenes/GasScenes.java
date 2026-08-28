@@ -23,8 +23,8 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 
 public class GasScenes {
 
-	private static FluidStack steam(int amount) {
-		return new FluidStack((Fluid) COFluids.STEAM.getSource(), amount);
+	private static FluidStack mist(int amount) {
+		return new FluidStack((Fluid) COFluids.SONIC_MIST.getSource(), amount);
 	}
 
 	private static FluidStack quartzVapour(int amount) {
@@ -51,7 +51,7 @@ public class GasScenes {
 		BlockPos sink = util.grid().at(4, 1, 2);
 		Selection row = util.select().fromTo(0, 1, 2, 4, 1, 2);
 
-		fillTank(scene, source, steam(4000));
+		fillTank(scene, source, mist(4000));
 		scene.world().showSection(row, Direction.DOWN);
 		scene.idle(10);
 		scene.world().setKineticSpeed(util.select().position(pump), 64);
@@ -68,7 +68,7 @@ public class GasScenes {
 
 		scene.overlay().showText(70)
 			.colored(PonderPalette.OUTPUT)
-			.text("Steam flows from the left tank to the right one")
+			.text("Sonic Mist flows from the left tank to the right one")
 			.pointAt(util.vector().blockSurface(sink, Direction.NORTH))
 			.placeNearTarget();
 		scene.idle(80);
@@ -113,7 +113,7 @@ public class GasScenes {
 			.placeNearTarget();
 		scene.idle(80);
 
-		fillTank(scene, source, steam(4000));
+		fillTank(scene, source, mist(4000));
 		scene.world().showSection(util.select().fromTo(0, 1, 2, 2, 2, 2), Direction.EAST);
 		scene.idle(10);
 		scene.world().setKineticSpeed(util.select().position(inPump), 64);
@@ -121,14 +121,14 @@ public class GasScenes {
 		scene.idle(10);
 		scene.overlay().showText(80)
 			.attachKeyFrame()
-			.text("Pipe steam in. The first conversion takes a while...")
+			.text("Pipe Sonic Mist in. The first conversion takes a while...")
 			.pointAt(util.vector().blockSurface(condenser, Direction.NORTH))
 			.placeNearTarget();
 		scene.idle(90);
 
 		scene.overlay().showText(80)
 			.colored(PonderPalette.GREEN)
-			.text("...but once the Condenser is warm it keeps converting quickly while it is fed")
+			.text("...but once the Condenser has cooled down it keeps converting quickly while it is fed")
 			.pointAt(util.vector().blockSurface(condenser, Direction.NORTH))
 			.placeNearTarget();
 		scene.idle(90);
@@ -204,13 +204,13 @@ public class GasScenes {
 		scene.world().setKineticSpeed(util.select().fromTo(2, 2, 2, 2, 3, 2), 256);
 		scene.world().modifyBlockEntity(cavitation, ResonanceChamberBlockEntity.class, be -> {
 			be.inputTank.getCapability().fill(MetalStacks.slurry("iron", 250), FluidAction.EXECUTE);
-			be.inputTank.getCapability().fill(steam(250), FluidAction.EXECUTE);
+			be.inputTank.getCapability().fill(mist(250), FluidAction.EXECUTE);
 		});
 		scene.idle(10);
 		scene.overlay().showText(100)
 			.attachKeyFrame()
 			.colored(PonderPalette.RED)
-			.text("Step 2: slurry and Steam in the Cavitation Chamber at the Ultrasonic band (256 RPM) become Metal Vapour")
+			.text("Step 2: slurry and Sonic Mist in the Cavitation Chamber at the Ultrasonic band (256 RPM) become Metal Vapour")
 			.pointAt(util.vector().blockSurface(cavitation, Direction.NORTH))
 			.placeNearTarget();
 		scene.idle(110);
@@ -258,7 +258,7 @@ public class GasScenes {
 			.placeNearTarget();
 		scene.idle(80);
 
-		fillTank(scene, source, steam(4000));
+		fillTank(scene, source, mist(4000));
 		scene.world().showSection(util.select().fromTo(0, 1, 2, 3, 1, 2), Direction.EAST);
 		scene.idle(10);
 		scene.world().setKineticSpeed(util.select().position(pump), 64);

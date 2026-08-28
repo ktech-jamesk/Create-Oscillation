@@ -228,7 +228,7 @@
         },
         {
           "at": -30,
-          "run": "data merge block 266 63 32 {InputTanks:[{TankContent:{Fluid:{id:\"createoscillation:steam\",amount:1000}}}]}"
+          "run": "data merge block 266 63 32 {InputTanks:[{TankContent:{Fluid:{id:\"createoscillation:sonic_mist\",amount:1000}}}]}"
         }
       ],
       "captions": [
@@ -239,7 +239,7 @@
           "anchor": "top-right"
         },
         {
-          "text": "Slurry + steam cavitate into metal vapour (Ultrasonic)",
+          "text": "Slurry + mist cavitate into metal vapour (Ultrasonic)",
           "at": 130,
           "until": 260,
           "anchor": "top-right"

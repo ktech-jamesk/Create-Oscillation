@@ -78,28 +78,28 @@ public class COGameTests {
 	 * Pump drive: motor(3,2,3) facing EAST -> cogwheel(4,2,3) on the X axis, meshing with the pump below.
 	 */
 	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 400)
-	public static void steamLoop(GameTestHelper helper) {
-		steamLoop(helper, false);
+	public static void mistLoop(GameTestHelper helper) {
+		mistLoop(helper, false);
 	}
 
 	/** Same loop, but a small cogwheel (axis Y) sits directly on the resonator instead of a shaft. */
 	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 400)
-	public static void steamLoopCogOnTop(GameTestHelper helper) {
-		steamLoop(helper, true);
+	public static void mistLoopCogOnTop(GameTestHelper helper) {
+		mistLoop(helper, true);
 	}
 
 	/** Regression: water added while the resonator is already spinning must still be processed. */
 	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 400)
-	public static void steamLoopWaterAddedLater(GameTestHelper helper) {
-		steamLoop(helper, false, true);
+	public static void mistLoopWaterAddedLater(GameTestHelper helper) {
+		mistLoop(helper, false, true);
 	}
 
 	/**
-	 * Steam in a Create tank -> pipe -> resonance pump -> 2x2x1 Condenser (4 blocks) -> water pulled
+	 * Sonic Mist in a Create tank -> pipe -> resonance pump -> 2x2x1 Condenser (4 blocks) -> water pulled
 	 * out through a second pump into a Create tank. Also checks the condenser refuses water.
 	 */
 	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 900)
-	public static void condenserSteamToWater(GameTestHelper helper) {
+	public static void condenserMistToWater(GameTestHelper helper) {
 		BlockPos source = new BlockPos(0, 1, 2);
 		BlockPos inPump = new BlockPos(1, 1, 2);
 		BlockPos inPumpMotor = new BlockPos(0, 2, 2);
@@ -127,7 +127,7 @@ public class COGameTests {
 		IFluidHandler sourceTank = helper.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, helper.absolutePos(source), null);
 		if (sourceTank == null)
 			helper.fail("Source tank has no fluid handler", source);
-		sourceTank.fill(new FluidStack((net.minecraft.world.level.material.Fluid) COFluids.STEAM.getSource(), 2000), FluidAction.EXECUTE);
+		sourceTank.fill(new FluidStack((net.minecraft.world.level.material.Fluid) COFluids.SONIC_MIST.getSource(), 2000), FluidAction.EXECUTE);
 
 		IFluidHandler condenserHandler = helper.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, helper.absolutePos(condenser.offset(1, 0, 1)), null);
 		if (condenserHandler == null)
@@ -151,15 +151,15 @@ public class COGameTests {
 				FluidStack stack = sinkTank.getFluidInTank(i);
 				if (stack.is(Fluids.WATER) && stack.getAmount() > 0)
 					water = true;
-				if (stack.getFluid().isSame(COFluids.STEAM.get()))
-					helper.fail("Steam bypassed the condenser", sink);
+				if (stack.getFluid().isSame(COFluids.SONIC_MIST.get()))
+					helper.fail("Sonic Mist bypassed the condenser", sink);
 			}
 			if (!water)
 				helper.fail("No water reached the sink tank yet. condenser=" + fluids(helper, condenser) + " source=" + fluids(helper, source), sink);
 		});
 	}
 
-	/** Regression: a continuous trickle of steam must not keep resetting the condenser's progress. */
+	/** Regression: a continuous trickle of mist must not keep resetting the condenser's progress. */
 	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 600)
 	public static void condenserProgressSurvivesInflow(GameTestHelper helper) {
 		BlockPos condenser = new BlockPos(2, 1, 2);
@@ -170,7 +170,7 @@ public class COGameTests {
 		}
 		helper.succeedWhen(() -> {
 			// 50 mb every tick, forever: the single block needs 500 ticks per 250 mb of water.
-			be.getCondenserFluidHandler().fill(new FluidStack((net.minecraft.world.level.material.Fluid) COFluids.STEAM.getSource(), 50), FluidAction.EXECUTE);
+			be.getCondenserFluidHandler().fill(new FluidStack((net.minecraft.world.level.material.Fluid) COFluids.SONIC_MIST.getSource(), 50), FluidAction.EXECUTE);
 			if (be.getOutputTank().getFluidAmount() <= 0)
 				helper.fail("No water condensed yet", condenser);
 		});
@@ -223,7 +223,7 @@ public class COGameTests {
 
 		IItemHandler chamberInv = helper.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, helper.absolutePos(chamber), null);
 
-		// In the Low band the water may become steam (band "any"), but the quartz must stay untouched.
+		// In the Low band the water may become mist (band "any"), but the quartz must stay untouched.
 		helper.runAfterDelay(200, () -> {
 			if (chamberBE.getBand() != FrequencyBand.LOW)
 				helper.fail("Expected Low band at 32 RPM, got " + chamberBE.getBand(), chamber);
@@ -250,34 +250,34 @@ public class COGameTests {
 		});
 	}
 
-	/** Steam is a Low-band recipe: it runs at 32 RPM... */
+	/** Sonic Mist is a Low-band recipe: it runs at 32 RPM... */
 	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 600)
-	public static void steamRunsInLowBand(GameTestHelper helper) {
+	public static void mistRunsInLowBand(GameTestHelper helper) {
 		BlockPos motor = new BlockPos(2, 4, 3);
 		BlockPos chamber = new BlockPos(2, 1, 3);
-		IFluidHandler chamberTank = steamRig(helper, 32);
+		IFluidHandler chamberTank = mistRig(helper, 32);
 
 		helper.succeedWhen(() -> {
-			if (!hasFluid(chamberTank, COFluids.STEAM.get()))
-				helper.fail("No steam in Low band: " + fluids(helper, chamber), chamber);
+			if (!hasFluid(chamberTank, COFluids.SONIC_MIST.get()))
+				helper.fail("No mist in Low band: " + fluids(helper, chamber), chamber);
 		});
 	}
 
 	/** ...and not at 128 RPM, so water can sit in a chamber tuned for other recipes. */
 	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 400)
-	public static void steamDoesNotRunInHighBand(GameTestHelper helper) {
+	public static void mistDoesNotRunInHighBand(GameTestHelper helper) {
 		BlockPos chamber = new BlockPos(2, 1, 3);
-		IFluidHandler chamberTank = steamRig(helper, 128);
+		IFluidHandler chamberTank = mistRig(helper, 128);
 		helper.runAfterDelay(300, () -> {
-			if (hasFluid(chamberTank, COFluids.STEAM.get()))
-				helper.fail("Steam formed in the High band: " + fluids(helper, chamber), chamber);
+			if (hasFluid(chamberTank, COFluids.SONIC_MIST.get()))
+				helper.fail("Sonic Mist formed in the High band: " + fluids(helper, chamber), chamber);
 			helper.succeed();
 		});
 	}
 
 	/** Motor -> shaft -> resonator -> chamber, with 250 mb water and one quartz in the chamber. */
 	private static IFluidHandler quartzRig(GameTestHelper helper, int rpm) {
-		IFluidHandler tank = steamRig(helper, rpm);
+		IFluidHandler tank = mistRig(helper, rpm);
 		BlockPos chamber = new BlockPos(2, 1, 3);
 		IItemHandler chamberInv = helper.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, helper.absolutePos(chamber), null);
 		if (chamberInv == null)
@@ -287,7 +287,7 @@ public class COGameTests {
 	}
 
 	/** Motor -> shaft -> resonator -> chamber, with 250 mb water in the chamber. Returns the chamber's fluid handler. */
-	private static IFluidHandler steamRig(GameTestHelper helper, int rpm) {
+	private static IFluidHandler mistRig(GameTestHelper helper, int rpm) {
 		BlockPos motor = new BlockPos(2, 4, 3);
 		BlockPos shaft = new BlockPos(2, 3, 3);
 		BlockPos resonator = new BlockPos(2, 2, 3);
@@ -400,7 +400,7 @@ public class COGameTests {
 	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 600)
 	public static void tunedCrystalAtMid(GameTestHelper helper) {
 		BlockPos chamber = new BlockPos(2, 1, 3);
-		steamRig(helper, 64);
+		mistRig(helper, 64);
 		IItemHandler chamberInv = helper.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, helper.absolutePos(chamber), null);
 		ItemHandlerHelper.insertItem(chamberInv, COItems.TUNED_CRYSTAL_LOW.asStack(), false);
 		ItemHandlerHelper.insertItem(chamberInv, new ItemStack(AllItems.ROSE_QUARTZ.get()), false);
@@ -439,7 +439,7 @@ public class COGameTests {
 	public static void slurryNeedsHighBand(GameTestHelper helper) {
 		BlockPos motor = new BlockPos(2, 4, 3);
 		BlockPos chamber = new BlockPos(2, 1, 3);
-		IFluidHandler chamberTank = steamRig(helper, 64);
+		IFluidHandler chamberTank = mistRig(helper, 64);
 		IItemHandler chamberInv = helper.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, helper.absolutePos(chamber), null);
 		ItemHandlerHelper.insertItem(chamberInv, new ItemStack(Items.RAW_IRON), false);
 		helper.runAfterDelay(200, () -> {
@@ -462,7 +462,7 @@ public class COGameTests {
 		});
 	}
 
-	/** Cavitation chamber at 256 RPM: iron slurry + steam → iron vapour. */
+	/** Cavitation chamber at 256 RPM: iron slurry + mist → iron vapour. */
 	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 600)
 	public static void cavitationMakesVapour(GameTestHelper helper) {
 		BlockPos motor = new BlockPos(2, 4, 3);
@@ -478,8 +478,8 @@ public class COGameTests {
 			helper.fail("Cavitation chamber exposes no fluid handler", chamber);
 		if (chamberTank.fill(MetalStacks.slurry("iron", 250), FluidAction.EXECUTE) != 250)
 			helper.fail("Could not insert slurry", chamber);
-		if (chamberTank.fill(new FluidStack((net.minecraft.world.level.material.Fluid) COFluids.STEAM.getSource(), 250), FluidAction.EXECUTE) != 250)
-			helper.fail("Could not insert steam", chamber);
+		if (chamberTank.fill(new FluidStack((net.minecraft.world.level.material.Fluid) COFluids.SONIC_MIST.getSource(), 250), FluidAction.EXECUTE) != 250)
+			helper.fail("Could not insert mist", chamber);
 		if (helper.getBlockEntity(motor) instanceof CreativeMotorBlockEntity motorBE)
 			motorBE.generatedSpeed.setValue(256);
 		helper.succeedWhen(() -> {
@@ -871,16 +871,16 @@ public class COGameTests {
 		helper.setBlock(pumpCog, AllBlocks.COGWHEEL.getDefaultState().setValue(RotatedPillarKineticBlock.AXIS, Direction.Axis.X));
 		helper.setBlock(pumpMotor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.DOWN));
 		IFluidHandler chamberTank = helper.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, helper.absolutePos(chamber), null);
-		if (chamberTank.fill(new FluidStack((net.minecraft.world.level.material.Fluid) COFluids.STEAM.getSource(), 250), FluidAction.EXECUTE) != 250)
-			helper.fail("Could not feed steam into the chamber input", chamber);
+		if (chamberTank.fill(new FluidStack((net.minecraft.world.level.material.Fluid) COFluids.SONIC_MIST.getSource(), 250), FluidAction.EXECUTE) != 250)
+			helper.fail("Could not feed mist into the chamber input", chamber);
 		if (helper.getBlockEntity(pumpMotor) instanceof CreativeMotorBlockEntity motorBE)
 			motorBE.generatedSpeed.setValue(64);
 		helper.runAfterDelay(120, () -> {
-			if (!hasFluid(chamberTank, COFluids.STEAM.get()))
-				helper.fail("Pump drained the chamber's input steam", chamber);
+			if (!hasFluid(chamberTank, COFluids.SONIC_MIST.get()))
+				helper.fail("Pump drained the chamber's input mist", chamber);
 			IFluidHandler sink = helper.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, helper.absolutePos(tank), null);
-			if (hasFluid(sink, COFluids.STEAM.get()))
-				helper.fail("Input steam ended up in the tank", tank);
+			if (hasFluid(sink, COFluids.SONIC_MIST.get()))
+				helper.fail("Input mist ended up in the tank", tank);
 			helper.succeed();
 		});
 	}
@@ -997,8 +997,8 @@ public class COGameTests {
 		}
 		if (handler.fill(new FluidStack(Fluids.WATER, 100), FluidAction.EXECUTE) != 0)
 			helper.fail("Vent accepted water", vent);
-		if (handler.fill(new FluidStack((net.minecraft.world.level.material.Fluid) COFluids.STEAM.getSource(), 100), FluidAction.EXECUTE) != 100)
-			helper.fail("Vent refused steam", vent);
+		if (handler.fill(new FluidStack((net.minecraft.world.level.material.Fluid) COFluids.SONIC_MIST.getSource(), 100), FluidAction.EXECUTE) != 100)
+			helper.fail("Vent refused mist", vent);
 		if (!handler.getFluidInTank(0).isEmpty())
 			helper.fail("Vent kept the gas instead of voiding it", vent);
 		helper.succeed();
@@ -1013,7 +1013,7 @@ public class COGameTests {
 			helper.fail("Condenser block entity missing", condenser);
 			return;
 		}
-		be.getTankInventory().fill(new FluidStack((net.minecraft.world.level.material.Fluid) COFluids.STEAM.getSource(), 1500), FluidAction.EXECUTE);
+		be.getTankInventory().fill(new FluidStack((net.minecraft.world.level.material.Fluid) COFluids.SONIC_MIST.getSource(), 1500), FluidAction.EXECUTE);
 		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
 		ItemStack held = new ItemStack(COItems.GAS_CANISTER.get());
 		player.setItemInHand(InteractionHand.MAIN_HAND, held);
@@ -1043,7 +1043,7 @@ public class COGameTests {
 		helper.setBlock(tank, AllBlocks.FLUID_TANK.getDefaultState());
 		BlockPos abs = helper.absolutePos(tank);
 		IFluidHandler tankHandler = helper.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, abs, null);
-		tankHandler.fill(new FluidStack((net.minecraft.world.level.material.Fluid) COFluids.STEAM.getSource(), 3000), FluidAction.EXECUTE);
+		tankHandler.fill(new FluidStack((net.minecraft.world.level.material.Fluid) COFluids.SONIC_MIST.getSource(), 3000), FluidAction.EXECUTE);
 		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
 		ItemStack held = new ItemStack(COItems.GAS_CANISTER.get());
 		player.setItemInHand(InteractionHand.MAIN_HAND, held);
@@ -1071,8 +1071,8 @@ public class COGameTests {
 		}
 		if (cap.fill(new FluidStack(Fluids.WATER, 1000), FluidAction.EXECUTE) != 0)
 			helper.fail("Canister accepted water", BlockPos.ZERO);
-		if (cap.fill(new FluidStack((net.minecraft.world.level.material.Fluid) COFluids.STEAM.getSource(), 1500), FluidAction.EXECUTE) != 1000)
-			helper.fail("Canister should take exactly 1000mb steam", BlockPos.ZERO);
+		if (cap.fill(new FluidStack((net.minecraft.world.level.material.Fluid) COFluids.SONIC_MIST.getSource(), 1500), FluidAction.EXECUTE) != 1000)
+			helper.fail("Canister should take exactly 1000mb mist", BlockPos.ZERO);
 		ItemStack filled = cap.getContainer();
 		if (GasCanisterItem.getContent(filled).getAmount() != 1000)
 			helper.fail("Canister content not stored: " + GasCanisterItem.getContent(filled), BlockPos.ZERO);
@@ -1091,7 +1091,7 @@ public class COGameTests {
 			helper.fail("Condenser block entity missing", condenser);
 			return;
 		}
-		be.getCondenserFluidHandler().fill(new FluidStack((net.minecraft.world.level.material.Fluid) COFluids.STEAM.getSource(), 2000), FluidAction.EXECUTE);
+		be.getCondenserFluidHandler().fill(new FluidStack((net.minecraft.world.level.material.Fluid) COFluids.SONIC_MIST.getSource(), 2000), FluidAction.EXECUTE);
 		// 2000 mb = 8 conversions: 500 + 7 * 20 = 640 ticks warm, vs 4000 ticks cold
 		helper.runAtTickTime(450, () -> {
 			if (be.getOutputTank().getFluidAmount() != 0)
@@ -1128,11 +1128,11 @@ public class COGameTests {
 		});
 	}
 
-	private static void steamLoop(GameTestHelper helper, boolean cogOnTop) {
-		steamLoop(helper, cogOnTop, false);
+	private static void mistLoop(GameTestHelper helper, boolean cogOnTop) {
+		mistLoop(helper, cogOnTop, false);
 	}
 
-	private static void steamLoop(GameTestHelper helper, boolean cogOnTop, boolean waterAddedLater) {
+	private static void mistLoop(GameTestHelper helper, boolean cogOnTop, boolean waterAddedLater) {
 		BlockPos motor = new BlockPos(2, 4, 3);
 		BlockPos shaft = new BlockPos(2, 3, 3);
 		BlockPos resonator = new BlockPos(2, 2, 3);
@@ -1175,7 +1175,7 @@ public class COGameTests {
 
 		for (BlockPos motorPos : new BlockPos[] { motor, pumpMotor }) {
 			if (helper.getBlockEntity(motorPos) instanceof CreativeMotorBlockEntity motorBE)
-				motorBE.generatedSpeed.setValue(motorPos.equals(motor) ? 32 : 64); // steam is a Low-band recipe
+				motorBE.generatedSpeed.setValue(motorPos.equals(motor) ? 32 : 64); // mist is a Low-band recipe
 			else
 				helper.fail("Creative motor missing", motorPos);
 		}
@@ -1188,16 +1188,16 @@ public class COGameTests {
 				.getCapability(Capabilities.FluidHandler.BLOCK, helper.absolutePos(tank), null);
 			if (tankHandler == null)
 				helper.fail("Tank exposes no fluid handler", tank);
-			boolean hasSteam = false;
+			boolean hasMist = false;
 			for (int i = 0; i < tankHandler.getTanks(); i++) {
 				FluidStack stack = tankHandler.getFluidInTank(i);
 				if (stack.is(Fluids.WATER))
 					helper.fail("Resonance pump moved water", tank);
-				if (stack.getFluid().isSame(COFluids.STEAM.get()) && stack.getAmount() > 0)
-					hasSteam = true;
+				if (stack.getFluid().isSame(COFluids.SONIC_MIST.get()) && stack.getAmount() > 0)
+					hasMist = true;
 			}
-			if (!hasSteam)
-				helper.fail("No steam reached the tank yet. " + describe(helper, resonator, chamber, pump, tank), tank);
+			if (!hasMist)
+				helper.fail("No mist reached the tank yet. " + describe(helper, resonator, chamber, pump, tank), tank);
 		});
 	}
 
@@ -1224,5 +1224,87 @@ public class COGameTests {
 			sb.append(f.isEmpty() ? "empty" : f.getAmount() + "mb " + f.getFluid().builtInRegistryHolder().key().location()).append(", ");
 		}
 		return sb.append("]").toString();
+	}
+
+	// ---- KubeJS integration ----
+
+	/**
+	 * The KubeJS metal helper writes recipe JSON by hand; this keeps it in step with datagen by decoding both
+	 * through the recipe codec and comparing the canonical re-encoding. Needs no KubeJS.
+	 */
+	@GameTest(template = "gametest/empty_8x6x8")
+	public static void kubejsMetalChainMatchesDatagen(GameTestHelper helper) {
+		var ops = helper.getLevel().registryAccess().createSerializationContext(com.mojang.serialization.JsonOps.INSTANCE);
+		var chain = co.pyragon.jamoss.compat.kubejs.MetalRecipeJson.chain("iron",
+			ResourceLocation.withDefaultNamespace("raw_iron"), ResourceLocation.withDefaultNamespace("iron_ingot"));
+		java.util.Map<String, String> datagenIds = java.util.Map.of(
+			"slurry_iron", "resonating/slurry_iron",
+			"vapour_iron", "cavitating/vapour_iron",
+			"concentrate_iron", "condensing/concentrate_iron",
+			"smelting/ingot_iron", "crafting/smelting/ingot_iron",
+			"blasting/ingot_iron", "crafting/blasting/ingot_iron");
+		for (var entry : chain.entrySet()) {
+			var datagen = helper.getLevel().getRecipeManager().byKey(CreateOscillation.asResource(datagenIds.get(entry.getKey())))
+				.orElseThrow(() -> new AssertionError("Datagen recipe missing: " + datagenIds.get(entry.getKey())));
+			var expected = net.minecraft.world.item.crafting.Recipe.CODEC.encodeStart(ops, datagen.value()).getOrThrow().getAsJsonObject();
+			var parsed = net.minecraft.world.item.crafting.Recipe.CODEC.parse(ops, entry.getValue())
+				.getOrThrow(msg -> new AssertionError("KubeJS JSON for " + entry.getKey() + " does not parse: " + msg));
+			var actual = net.minecraft.world.item.crafting.Recipe.CODEC.encodeStart(ops, parsed).getOrThrow().getAsJsonObject();
+			if (entry.getKey().startsWith("slurry")) {
+				// datagen matches the c:raw_materials tag, the helper the raw ore item the pack gave
+				var ore = new com.google.gson.JsonObject();
+				ore.addProperty("item", "minecraft:raw_iron");
+				expected.getAsJsonArray("ingredients").set(0, ore);
+			}
+			if (!expected.equals(actual))
+				helper.fail("KubeJS " + entry.getKey() + " differs from datagen. expected " + expected + " actual " + actual);
+		}
+		helper.succeed();
+	}
+
+	/**
+	 * With KubeJS in the runtime and run/kubejs/server_scripts/oscillation_example.js present, the example script
+	 * must have registered the tin metal and the four schema-built recipes. Passes (with a log line) otherwise.
+	 */
+	@GameTest(template = "gametest/empty_8x6x8")
+	public static void kubejsExampleScriptLoaded(GameTestHelper helper) {
+		if (!net.neoforged.fml.ModList.get().isLoaded("kubejs")) {
+			CreateOscillation.LOGGER.info("kubejsExampleScriptLoaded: KubeJS not loaded, skipping");
+			helper.succeed();
+			return;
+		}
+		if (!java.nio.file.Files.exists(java.nio.file.Path.of("kubejs", "server_scripts", "oscillation_example.js"))) {
+			CreateOscillation.LOGGER.info("kubejsExampleScriptLoaded: example script not present in run/kubejs/server_scripts, skipping");
+			helper.succeed();
+			return;
+		}
+		var recipes = helper.getLevel().getRecipeManager();
+		if (recipes.byKey(ResourceLocation.fromNamespaceAndPath("kubejs", "createoscillation/slurry_tin")).isEmpty())
+			helper.fail("Helper recipe missing: slurry_tin (did Oscillation.addMetal run?)");
+		if (Metals.colour("tin") != 0xC8D0D8)
+			helper.fail("Tin data-map entry missing or wrong colour: " + Integer.toHexString(Metals.colour("tin")));
+		for (String name : new String[] { "vapour_tin", "concentrate_tin", "smelting/ingot_tin", "blasting/ingot_tin" })
+			if (recipes.byKey(ResourceLocation.fromNamespaceAndPath("kubejs", "createoscillation/" + name)).isEmpty())
+				helper.fail("Helper recipe missing: " + name);
+
+		var mist = recipes.byKey(ResourceLocation.fromNamespaceAndPath("kubejs", "oscillation_example_mist"))
+			.orElseThrow(() -> new AssertionError("Schema recipe missing: oscillation_example_mist"));
+		if (!(mist.value() instanceof co.pyragon.jamoss.content.recipe.ResonatingRecipe r))
+			helper.fail("oscillation_example_mist is not a resonating recipe: " + mist.value());
+		else if (r.getBand() != FrequencyBand.MID || r.getProcessingDuration() != 60 || r.getFluidResults().get(0).getAmount() != 500)
+			helper.fail("oscillation_example_mist decoded wrong: band=" + r.getBand() + " time=" + r.getProcessingDuration() + " out=" + r.getFluidResults());
+		var cav = recipes.byKey(ResourceLocation.fromNamespaceAndPath("kubejs", "oscillation_example_cavitating"))
+			.orElseThrow(() -> new AssertionError("Schema recipe missing: oscillation_example_cavitating"));
+		if (!(cav.value() instanceof co.pyragon.jamoss.content.recipe.CavitatingRecipe c) || c.getBand() != FrequencyBand.ULTRASONIC || c.getIngredients().size() != 1)
+			helper.fail("oscillation_example_cavitating decoded wrong: " + cav.value());
+		var cond = recipes.byKey(ResourceLocation.fromNamespaceAndPath("kubejs", "oscillation_example_condensing"))
+			.orElseThrow(() -> new AssertionError("Schema recipe missing: oscillation_example_condensing"));
+		if (!(cond.value() instanceof CondensingRecipe d) || d.getProcessingDuration() != 50 || d.getRollableResults().size() != 1 || d.getFluidResults().size() != 1)
+			helper.fail("oscillation_example_condensing decoded wrong: " + cond.value());
+		var sift = recipes.byKey(ResourceLocation.fromNamespaceAndPath("kubejs", "oscillation_example_sifting"))
+			.orElseThrow(() -> new AssertionError("Schema recipe missing: oscillation_example_sifting"));
+		if (!(sift.value() instanceof co.pyragon.jamoss.content.recipe.SiftingRecipe s) || s.getRollableResults().size() != 2 || s.getRollableResults().get(0).getChance() != 0.25f)
+			helper.fail("oscillation_example_sifting decoded wrong: " + sift.value());
+		helper.succeed();
 	}
 }

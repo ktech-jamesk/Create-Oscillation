@@ -19,7 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.fluids.crafting.DataComponentFluidIngredient;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 
-/** Step 2 of the ore chain: slurry + steam → metal vapour, Ultrasonic band, Cavitation Chamber only. */
+/** Step 2 of the ore chain: slurry + mist → metal vapour, Ultrasonic band, Cavitation Chamber only. */
 public class COCavitatingRecipeGen extends ProcessingRecipeGen<ProcessingRecipeParams, CavitatingRecipe, CavitatingRecipeBuilder> {
 
 	{
@@ -27,7 +27,7 @@ public class COCavitatingRecipeGen extends ProcessingRecipeGen<ProcessingRecipeP
 			create("vapour_" + metal.id(), b -> b
 				.require(new SizedFluidIngredient(DataComponentFluidIngredient.of(false, CODataComponents.METAL,
 					metal.id(), COFluids.ORE_SLURRY.getSource()), 250))
-				.require(COFluids.STEAM.getSource(), 250)
+				.require(COFluids.SONIC_MIST.getSource(), 250)
 				.output(MetalStacks.vapour(metal.id(), 250))
 				.duration(200)
 				.frequency(FrequencyBand.ULTRASONIC));

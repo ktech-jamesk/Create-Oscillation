@@ -34,6 +34,19 @@ repositories {
     maven { url = "https://maven.theillusivec4.top/" } // Curios API (transitive from Create)
     maven { url = "https://maven.squiddev.cc" } // CC: Tweaked (transitive from Create)
     maven { url = "https://api.modrinth.com/maven" }
+    maven { // KubeJS + Rhino
+        url = "https://maven.latvian.dev/releases"
+        content {
+            includeGroup "dev.latvian.mods"
+            includeGroup "dev.latvian.apps"
+        }
+    }
+    maven { // KubeJS's bundled runtime libs (dev runtime only)
+        url = "https://maven.latvian.dev/mirror"
+        content {
+            includeGroup "com.github.rtyley"
+        }
+    }
     maven { url = "https://www.cursemaven.com" }
     // NeoForge config api port, needed by Ponder
     maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven" }
@@ -146,6 +159,11 @@ dependencies {
 
     // Jade: dev runtime only, for inspecting blocks in-game
     localRuntime("maven.modrinth:jade:${jade_version}")
+
+    // KubeJS: API at compile time (recipe schemas + metal helper, loaded only when KubeJS is present),
+    // full mod in the dev runtime so scripts in run/kubejs can be tried and gametested
+    compileOnly("dev.latvian.mods:kubejs-neoforge:${kubejs_version}")
+    localRuntime("dev.latvian.mods:kubejs-neoforge:${kubejs_version}")
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

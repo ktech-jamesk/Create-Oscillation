@@ -43,7 +43,7 @@ public class GasCanisterItem extends Item {
 	/** Every gas a canister can hold, one full canister each (used by JEI and the creative tab). */
 	public static java.util.List<ItemStack> allFilled(Item canister) {
 		java.util.List<ItemStack> list = new java.util.ArrayList<>();
-		list.add(filled(canister, new FluidStack((net.minecraft.world.level.material.Fluid) co.pyragon.jamoss.registry.COFluids.STEAM.getSource(), CAPACITY)));
+		list.add(filled(canister, new FluidStack((net.minecraft.world.level.material.Fluid) co.pyragon.jamoss.registry.COFluids.SONIC_MIST.getSource(), CAPACITY)));
 		list.add(filled(canister, new FluidStack((net.minecraft.world.level.material.Fluid) co.pyragon.jamoss.registry.COFluids.QUARTZ_VAPOUR.getSource(), CAPACITY)));
 		java.util.Set<String> metals = new java.util.LinkedHashSet<>();
 		for (var entry : co.pyragon.jamoss.content.ore.Metals.all().values())

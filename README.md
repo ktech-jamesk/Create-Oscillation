@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="logo.png" alt="Create: Oscillation" width="720">
+<img src="https://raw.githubusercontent.com/ktech-jamesk/Create-Oscillation/refs/heads/main/logo.png" alt="Create: Oscillation" width="720">
 
 **Vibration as energy. Gases as a processing medium.**
 
@@ -22,7 +22,7 @@ A **Resonator** turns any shaft into vibration, and its speed picks one of four 
 
 From there the mod adds:
 
-- **Gases as Create fluids** — steam, quartz vapour and metal vapours that flow through pipes, sit in tanks and get condensed back into liquids and solids.
+- **Gases as Create fluids** — Sonic Mist (cold ultrasonic water mist), quartz vapour and metal vapours that flow through pipes, sit in tanks and get condensed back into liquids and solids.
 - **Tuned crystals** — grown tier by tier, then used to tune, power and fuel the brass-age machines.
 - **Wireless rotation** — a Resonance Emitter and Receiver pass a kinetic network across open air.
 - **The Sonic Pulveriser** — a crystal-fuelled machine that shatters whole layers of blocks, on its own or on a contraption.
@@ -37,13 +37,13 @@ Every block has a Ponder scene (hover the item, press <kbd>W</kbd>).
 - **[CurseForge](https://www.curseforge.com/minecraft/mc-mods/create-oscillation)**
 - [GitHub Releases](https://github.com/ktech-jamesk/Create-Oscillation/releases)
 
-Requires Create 6.0.10+ on NeoForge for Minecraft 1.21.1. JEI is optional but recommended.
+Requires Create 6.0.10+ on NeoForge for Minecraft 1.21.1. JEI is optional but recommended. KubeJS is optional: it adds typed recipe builders and a one-line `Oscillation.addMetal(...)` helper for pack makers (see the [guide](GUIDE.md#adding-a-metal-pack-makers)).
 
 ## Building from source
 
 ```
 ./gradlew build              # jar into build/libs
-./gradlew runClient          # dev client with Create, JEI and Jade
+./gradlew runClient          # dev client with Create, JEI, Jade and KubeJS
 ./gradlew runData            # datagen into src/generated/resources
 ./gradlew runGameTestServer  # headless gametests
 ```

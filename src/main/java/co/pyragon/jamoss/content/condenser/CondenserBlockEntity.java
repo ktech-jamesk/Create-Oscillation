@@ -47,7 +47,7 @@ public class CondenserBlockEntity extends FluidTankBlockEntity {
 
 	public static final int ITEM_OUTPUT_SLOTS = 9;
 	private static final int ITEM_PUSH_INTERVAL = 8;
-	/** Once warmed up, a recipe repeats this often while gas keeps coming. */
+	/** Once cooled down (running steadily), a recipe repeats this often while gas keeps coming. */
 	public static final int WARM_INTERVAL = 20;
 	/** Ticks without work before the condenser cools down again. */
 	public static final int COOLDOWN_TICKS = 200;
@@ -158,6 +158,7 @@ public class CondenserBlockEntity extends FluidTankBlockEntity {
 		super.tick();
 		if (level == null || level.isClientSide || !isController())
 			return;
+		boolean wasWarm = warm;
 
 		if (recipeDirty)
 			refreshRecipe();
@@ -167,7 +168,7 @@ public class CondenserBlockEntity extends FluidTankBlockEntity {
 			if (canApply(recipe)) {
 				idleTicks = 0;
 				progress++; // size never speeds this up; bigger condensers only hold more
-				// warm-up: the first conversion takes the full duration, then it runs at WARM_INTERVAL
+				// cool-down: the first conversion takes the full duration, then it runs at WARM_INTERVAL
 				int duration = warm ? Math.min(WARM_INTERVAL, Math.max(1, recipe.getProcessingDuration()))
 					: Math.max(1, recipe.getProcessingDuration());
 				while (progress >= duration && canApply(recipe)) {
@@ -186,6 +187,8 @@ public class CondenserBlockEntity extends FluidTankBlockEntity {
 			coolDown();
 		}
 
+		if (warm != wasWarm)
+			sendData();
 		if (level.getGameTime() % ITEM_PUSH_INTERVAL == 0)
 			pushItemsBelow();
 	}
@@ -311,7 +314,7 @@ public class CondenserBlockEntity extends FluidTankBlockEntity {
 		fluidLine(tooltip, "gui.goggles.condenser.liquid", condenser.outputTank.getFluid(), condenser.outputTank.getCapacity());
 
 		if (condenser.warm)
-			lang("gui.goggles.condenser.warm").style(ChatFormatting.GOLD).forGoggles(tooltip, 1);
+			lang("gui.goggles.condenser.cooled").style(ChatFormatting.GOLD).forGoggles(tooltip, 1);
 		int items = 0;
 		for (int i = 0; i < condenser.outputItems.getSlots(); i++)
 			items += condenser.outputItems.getStackInSlot(i).getCount();

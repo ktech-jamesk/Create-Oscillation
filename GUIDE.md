@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="media/ponder/logo.gif" alt="Create: Oscillation" width="720">
+<img src="https://raw.githubusercontent.com/ktech-jamesk/Create-Oscillation/refs/heads/main/media/ponder/logo.gif" alt="Create: Oscillation" width="720">
 
 **Vibration as energy. Gases as a processing medium.**
 
@@ -18,12 +18,12 @@ A **Resonator** takes a shaft from above and shakes whatever sits directly below
 
 | Band | RPM | Unlocks |
 |:--|:--:|:--|
-| **Low** | 32 | Steam, sifting, the first tuned crystal |
+| **Low** | 32 | Sonic Mist, sifting, the first tuned crystal |
 | **Mid** | 64 | Quartz Vapour, crystal growth |
 | **High** | 128 | Ore slurry, the strongest crystals |
 | **Ultrasonic** | 256 | Cavitation, ore multiplication, wireless power at scale |
 
-Recipes name the band they need and only run in exactly that band. Water becomes steam at Low — and *stays water* at Mid or above, so a fast chamber keeps its inputs for the recipe you actually want. Goggles show the current band on every Resonator and chamber; JEI shows the band under each recipe.
+Recipes name the band they need and only run in exactly that band. Water becomes mist at Low — and *stays water* at Mid or above, so a fast chamber keeps its inputs for the recipe you actually want. Goggles show the current band on every Resonator and chamber; JEI shows the band under each recipe.
 
 **Tuning Fork** — a shaft relay you place between the drive shaft and a Resonator. Scroll it to a band and it hands rotation downward at *exactly* that band's speed. One fast shaft can feed a row of chambers, each at its own band.
 
@@ -31,9 +31,9 @@ Recipes name the band they need and only run in exactly that band. Water becomes
 
 Gases are real Create fluids: they flow through pipes, sit in tanks, appear in JEI, and can be carried in a **Gas Canister** (1000 mb, tinted by what's inside). They render as drifting vapour rather than liquid, and in a chamber they gather under the glass dome while liquids pool below.
 
-- **Resonance Chamber** — a glass-domed basin driven by a Resonator. Right-click any side with an item to insert; pipe liquids in from the sides. Runs *resonating* recipes: water → Steam (Low), quartz + water → Quartz Vapour (Mid), raw ore + water → ore slurry (High), crystal growth… Pipes can only *feed* a chamber's inputs and *draw* its outputs, so a pump never steals what the recipe needs.
+- **Resonance Chamber** — a glass-domed basin driven by a Resonator. Right-click any side with an item to insert; pipe liquids in from the sides. Runs *resonating* recipes: water → Sonic Mist (Low), quartz + water → Quartz Vapour (Mid), raw ore + water → ore slurry (High), crystal growth… Pipes can only *feed* a chamber's inputs and *draw* its outputs, so a pump never steals what the recipe needs.
 - **Resonance Pump** — a Mechanical Pump that only moves gases. Liquids stay put.
-- **Condenser** — passive, resizable up to 3×3 wide. Gas in, liquid and solids out: steam → water, Quartz Vapour → water + quartz (and sometimes a Rough Quartz Crystal), metal vapour → concentrate. The first conversion is slow; after that it stays *warm* and keeps up as long as it's fed. Solids drop into the inventory below or are pulled from the sides.
+- **Condenser** — passive, resizable up to 3×3 wide. Gas in, liquid and solids out: mist → water, Quartz Vapour → water + quartz (and sometimes a Rough Quartz Crystal), metal vapour → concentrate. The first conversion is slow while it cools down; after that it stays *cold* and keeps up as long as it's fed. Solids drop into the inventory below or are pulled from the sides.
 - **Vent** — voids any gas piped into it with a plume; refuses liquids.
 - **Vibrating Sieve** — a mesh cage that sits under a Resonator. Gravel, sand, red sand and soul sand shake down into flint, nuggets and more; results land in the inventory below.
 
@@ -52,7 +52,7 @@ Crystals are ordinary stackable items. They tune the Resonance Emitter and Recei
 
 ## Sonic Pulveriser
 
-<img src="media/ponder/pulveriser_mid.gif" alt="Sonic Pulveriser with a Mid-Tuned Crystal" width="640">
+<img src="https://raw.githubusercontent.com/ktech-jamesk/Create-Oscillation/refs/heads/main/media/ponder/pulveriser_mid.gif" alt="Sonic Pulveriser with a Mid-Tuned Crystal" width="640">
 
 A Resonator turned sideways: shaft in the back, vibration out the front. Any rotation drives it, but it does nothing until it has a crystal — the crystal is both its **fuel** and its **tier**.
 
@@ -63,13 +63,13 @@ A Resonator turned sideways: shaft in the back, vibration out the front. Any rot
 | High | 5×5 | 3 | obsidian |
 | Ultrasonic | 7×7 | 4 | anything breakable |
 
-<img src="media/ponder/pulveriser_ultrasonic.gif" alt="Sonic Pulveriser with an Ultrasonic Crystal" width="640">
+<img src="https://raw.githubusercontent.com/ktech-jamesk/Create-Oscillation/refs/heads/main/media/ponder/pulveriser_ultrasonic.gif" alt="Sonic Pulveriser with an Ultrasonic Crystal" width="640">
 
 The nearest layer of blocks in front cracks together and shatters together; harder blocks take longer and cost more fuel. It never breaks blocks with inventories or machinery, and a Create **filter** on the side limits what it takes. Each crystal burns down like furnace fuel (512 → 4096 charge by tier) and leaves a Rough Quartz Crystal in the output slot; hoppers and funnels can keep it fed. Sneak + wrench ejects the fuel. Mount it on a piston, gantry or bearing and it works while the contraption moves, dropping into attached storage.
 
 ## Resonance Emitter & Receiver
 
-<img src="media/ponder/coupler.gif" alt="Resonance Emitter and Receiver" width="640">
+<img src="https://raw.githubusercontent.com/ktech-jamesk/Create-Oscillation/refs/heads/main/media/ponder/coupler.gif" alt="Resonance Emitter and Receiver" width="640">
 
 Put matching crystals in both, aim them at each other through open air, and rotation crosses the gap.
 
@@ -79,10 +79,10 @@ Put matching crystals in both, aim them at each other through open air, and rota
 
 ## Ore multiplication — 2.5 ingots per raw ore
 
-<img src="media/ponder/ore_line.gif" alt="Ore multiplication line" width="640">
+<img src="https://raw.githubusercontent.com/ktech-jamesk/Create-Oscillation/refs/heads/main/media/ponder/ore_line.gif" alt="Ore multiplication line" width="640">
 
 1. **Resonance Chamber, High band**: raw ore + 250 mb water → ore slurry.
-2. **Cavitation Chamber, Ultrasonic**: slurry + 250 mb steam → metal vapour. The Cavitation Chamber is a reinforced chamber (Resonance Chamber + brass casing + High-Tuned Crystal) that only runs cavitating recipes.
+2. **Cavitation Chamber, Ultrasonic**: slurry + 250 mb mist → metal vapour. The Cavitation Chamber is a reinforced chamber (Resonance Chamber + brass casing + High-Tuned Crystal) that only runs cavitating recipes.
 3. **Condenser**: vapour → water + 2 concentrate, with a 50% chance of a third.
 4. Smelt or blast the concentrate into ingots.
 
@@ -90,7 +90,33 @@ Iron, gold, copper and zinc are built in, matched by `c:raw_materials/*` tags so
 
 ### Adding a metal (pack makers)
 
-No code needed:
+**With KubeJS** (optional), one line in a server script adds the data-map entry and the whole recipe chain:
+
+```js
+ServerEvents.generateData('after_mods', event => {
+  Oscillation.addMetal(event, 'tin', 'somemod:raw_tin', 'somemod:tin_ingot', '#C8D0D8')
+})
+```
+
+Leave out the ingot to skip the smelting/blasting recipes. The recipes land as `kubejs:createoscillation/*` and can be removed or edited in `ServerEvents.recipes` like any other. For a display name add `ClientEvents.lang('en_us', e => e.add('createoscillation.metal.tin', 'Tin'))` (it falls back to "Tin" from the id anyway).
+
+The four recipe types also get typed builders:
+
+```js
+ServerEvents.recipes(event => {
+  event.recipes.createoscillation.resonating([Fluid.of('createoscillation:sonic_mist', 500)], [Fluid.water(500)])
+    .frequency('mid').processingTime(60)
+  event.recipes.createoscillation.cavitating([Fluid.of('createoscillation:quartz_vapour', 250)], [Fluid.of('createoscillation:sonic_mist', 250), 'minecraft:quartz'])
+    .frequency('ultrasonic')
+  event.recipes.createoscillation.condensing(['minecraft:ice', Fluid.water(250)], [Fluid.of('createoscillation:sonic_mist', 250)])
+  event.recipes.createoscillation.sifting([Oscillation.output('minecraft:bone_meal', 0.25), { id: 'minecraft:stick', chance: 0.5 }], ['minecraft:dirt'])
+  event.remove({ type: 'createoscillation:resonating', output: 'createoscillation:quartz_vapour' })
+})
+```
+
+Outputs come first, inputs second (Create's convention); `frequency` is `low` / `mid` / `high` / `ultrasonic` (default any). Chance outputs are `Oscillation.output(item, chance)` or `{ id, count, chance }` objects.
+
+**With plain JSON**, no code needed:
 
 1. Map the raw ore in `data/<ns>/data_maps/item/createoscillation/metals.json`:
    ```json
@@ -101,7 +127,7 @@ No code needed:
 
 ## Progression at a glance
 
-**Andesite age** — Resonator, Resonance Chamber, Resonance Pump, Condenser, Vent, Gas Canister, Vibrating Sieve. Steam and Quartz Vapour.
+**Andesite age** — Resonator, Resonance Chamber, Resonance Pump, Condenser, Vent, Gas Canister, Vibrating Sieve. Sonic Mist and Quartz Vapour.
 
 **Brass age** — crystals, Tuning Fork, Emitter & Receiver, Cavitation Chamber and the ore line, Sonic Pulveriser.
 

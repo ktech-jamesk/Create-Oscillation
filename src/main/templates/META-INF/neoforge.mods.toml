@@ -45,3 +45,10 @@ Tuned crystals power a wireless rotation link, a layer-breaking Sonic Pulveriser
     versionRange="[19,)"
     ordering="AFTER"
     side="CLIENT"
+
+[[dependencies.${mod_id}]]
+    modId="kubejs"
+    type="optional"
+    versionRange="[2101.7,)"
+    ordering="AFTER"
+    side="BOTH"

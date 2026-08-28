@@ -21,7 +21,7 @@ import net.minecraft.world.level.material.Fluids;
 
 public class COCondensingRecipeGen extends StandardProcessingRecipeGen<CondensingRecipe> {
 
-	GeneratedRecipe WATER = create("water", b -> b.require(COFluids.STEAM.getSource(), 250)
+	GeneratedRecipe WATER = create("water", b -> b.require(COFluids.SONIC_MIST.getSource(), 250)
 		.output(Fluids.WATER, 250)
 		.duration(500));
 

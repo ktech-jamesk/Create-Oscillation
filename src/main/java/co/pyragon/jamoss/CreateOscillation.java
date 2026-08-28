@@ -78,7 +78,7 @@ public class CreateOscillation {
 		REGISTRATE.addRawLang("createoscillation.gui.goggles.condenser.gas", "Gas:");
 		REGISTRATE.addRawLang("createoscillation.gui.goggles.condenser.liquid", "Condensed:");
 		REGISTRATE.addRawLang("createoscillation.gui.goggles.condenser.items", "%s item(s) waiting to be collected");
-		REGISTRATE.addRawLang("createoscillation.gui.goggles.condenser.warm", "Warmed up");
+		REGISTRATE.addRawLang("createoscillation.gui.goggles.condenser.cooled", "Cooled down");
 
 		COCreativeTabs.register(modEventBus);
 		CODataComponents.register(modEventBus);

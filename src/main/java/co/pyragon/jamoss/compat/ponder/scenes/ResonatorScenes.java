@@ -117,7 +117,7 @@ public class ResonatorScenes {
 		scene.idle(10);
 		scene.overlay().showText(90)
 			.attachKeyFrame()
-			.text("With a Resonator spinning on top, Resonating recipes run: here water becomes Steam in the Low band")
+			.text("With a Resonator spinning on top, Resonating recipes run: here water becomes Sonic Mist in the Low band")
 			.pointAt(util.vector().blockSurface(resonator, Direction.WEST))
 			.placeNearTarget();
 		scene.idle(100);
@@ -188,7 +188,7 @@ public class ResonatorScenes {
 		scene.overlay().showText(90)
 			.attachKeyFrame()
 			.colored(PonderPalette.GREEN)
-			.text("Gear up to 64 RPM and the recipe runs. Steam only forms in the Low band, so faster chambers keep their water")
+			.text("Gear up to 64 RPM and the recipe runs. Sonic Mist only forms in the Low band, so faster chambers keep their water")
 			.pointAt(util.vector().blockSurface(resonator, Direction.WEST))
 			.placeNearTarget();
 		scene.idle(100);

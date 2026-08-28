@@ -1,0 +1,16 @@
+{
+	"hidden": true,
+	"parent": "createoscillation:base/processing",
+	"keys": [
+		{
+			"name": "frequency",
+			"role": "input",
+			"type": "createoscillation:frequency",
+			"optional": "any",
+			"excluded": true
+		}
+	],
+	"merge": {
+		"keys": true
+	}
+}

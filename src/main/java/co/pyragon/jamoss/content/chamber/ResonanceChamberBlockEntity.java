@@ -89,7 +89,7 @@ public class ResonanceChamberBlockEntity extends BasinBlockEntity implements IHa
 		inputTank.whenFluidUpdates(this::notifyChangeOfContents);
 		outputTank.whenFluidUpdates(this::notifyChangeOfContents);
 		// Unlike a plain basin, pipes may only feed the inputs and only draw the outputs: a pump must
-		// never steal the steam a chamber is about to process.
+		// never steal the mist a chamber is about to process.
 		fluidCapability = new com.simibubi.create.foundation.fluid.CombinedTankWrapper(
 			new co.pyragon.jamoss.content.fluid.FluidViews.ExtractOnly(outputTank.getCapability()),
 			new co.pyragon.jamoss.content.fluid.FluidViews.InsertOnly(inputTank.getCapability()));
