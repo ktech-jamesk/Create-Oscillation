@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/ktech-jamesk/Create-Oscillation/refs/heads/main/logo.png" alt="Create: Oscillation" width="720">
+<img src="https://raw.githubusercontent.com/ktech-jamesk/Create-Oscillation/refs/heads/main/media/ponder/logo.gif" alt="Create: Oscillation" width="720">
 
 **Vibration as energy. Gases as a processing medium.**
 
