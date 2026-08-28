@@ -30,6 +30,8 @@ Recipes declare the band they need, so the same chamber does different things at
 
 Every block has a **Ponder** scene — hover the item and press <kbd>W</kbd>.
 
+For the full walkthrough with clips of each machine, see **[GUIDE.md](GUIDE.md)**.
+
 ## The machines
 
 ### Andesite age
@@ -89,6 +91,8 @@ Slurry, vapour, concentrate and canisters pick up the new metal's name and colou
 ./gradlew runClient          # dev client with Create, JEI and Jade
 ./gradlew runData            # datagen into src/generated/resources
 ./gradlew runGameTestServer  # headless gametests
+./gradlew runShowcase        # replays run/showcase/shots.json in the "showcase" world and saves frames (see tools/shots.example.json)
+python tools/showcase_gifs.py  # turns those frames into media/ponder/*.gif and a contact sheet
 ```
 
 Versions live in `gradle.properties`.

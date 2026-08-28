@@ -41,5 +41,6 @@ public class CreateOscillationClient {
 	@SubscribeEvent
 	static void onClientSetup(FMLClientSetupEvent event) {
 		PonderIndex.addPlugin(new COPonderPlugin());
+		co.pyragon.jamoss.showcase.ShowcaseRunner.install();
 	}
 }

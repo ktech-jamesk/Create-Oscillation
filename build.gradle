@@ -72,6 +72,14 @@ neoForge {
             programArgument '--nogui'
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
+        // Dev-only media capture: joins the "showcase" world, plays every Ponder scene, saves frames
+        // to run/screenshots/showcase, exits. Then: python tools/showcase_gifs.py
+        showcase {
+            client()
+            systemProperty 'createoscillation.showcase', 'true'
+            programArguments.addAll '--quickPlaySingleplayer', 'showcase', '--width', '1280', '--height', '720'
+        }
+
         // This run config launches GameTestServer and runs all registered gametests, then exits.
         // By default, the server will crash when no gametests are provided.
         // The gametest system is also enabled by default for other run configs under the /test command.

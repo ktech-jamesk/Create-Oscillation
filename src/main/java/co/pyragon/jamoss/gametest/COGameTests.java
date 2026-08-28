@@ -801,6 +801,90 @@ public class COGameTests {
 		return be;
 	}
 
+	/** The showcase shot list feeds crystals with /data merge; make sure that NBT shape lands in the inventory. */
+	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 200)
+	public static void pulveriserAcceptsDataMerge(GameTestHelper helper) {
+		SonicPulveriserBlockEntity be = pulveriserRig(helper, ItemStack.EMPTY);
+		BlockPos stone = new BlockPos(2, 2, 3);
+		helper.setBlock(stone, Blocks.STONE.defaultBlockState());
+		BlockPos abs = helper.absolutePos(new BlockPos(1, 2, 3));
+		String cmd = String.format("data merge block %d %d %d {Inventory:{Items:[{Slot:0b,id:\"createoscillation:tuned_crystal_low\",count:1}],Size:2},Charge:0}",
+			abs.getX(), abs.getY(), abs.getZ());
+		var server = helper.getLevel().getServer();
+		boolean[] ok = { false };
+		server.getCommands().performPrefixedCommand(server.createCommandSourceStack().withSuppressedOutput().withPermission(4)
+			.withCallback((success, result) -> ok[0] = success), cmd);
+		if (!ok[0])
+			helper.fail("data merge command was rejected", new BlockPos(1, 2, 3));
+		if (!be.inventory.getStackInSlot(PulveriserInventory.CRYSTALS).is(COItems.TUNED_CRYSTAL_LOW.get()))
+			helper.fail("Crystal not in inventory after data merge: " + be.inventory.getStackInSlot(0), new BlockPos(1, 2, 3));
+		helper.succeedWhen(() -> {
+			if (!helper.getBlockState(stone).isAir())
+				helper.fail("Stone not broken after data-merged crystal", stone);
+		});
+	}
+
+	/** Exactly what the showcase shot list does: everything placed and fed by commands only. */
+	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 300)
+	public static void pulveriserCommandOnlySetup(GameTestHelper helper) {
+		var server = helper.getLevel().getServer();
+		BlockPos motor = helper.absolutePos(new BlockPos(0, 2, 3));
+		BlockPos pulveriser = helper.absolutePos(new BlockPos(1, 2, 3));
+		BlockPos stoneRel = new BlockPos(2, 2, 3);
+		BlockPos stone = helper.absolutePos(stoneRel);
+		java.util.List<String> cmds = java.util.List.of(
+			String.format("setblock %d %d %d create:creative_motor[facing=east]", motor.getX(), motor.getY(), motor.getZ()),
+			String.format("setblock %d %d %d createoscillation:sonic_pulveriser[facing=east]", pulveriser.getX(), pulveriser.getY(), pulveriser.getZ()),
+			String.format("fill %d %d %d %d %d %d stone", stone.getX(), stone.getY(), stone.getZ(), stone.getX(), stone.getY(), stone.getZ()),
+			String.format("data merge block %d %d %d {Inventory:{Items:[{Slot:0b,id:\"createoscillation:tuned_crystal_low\",count:1}],Size:2},Charge:0}",
+				pulveriser.getX(), pulveriser.getY(), pulveriser.getZ()));
+		for (String cmd : cmds) {
+			boolean[] ok = { false };
+			server.getCommands().performPrefixedCommand(server.createCommandSourceStack().withSuppressedOutput().withPermission(4)
+				.withCallback((success, result) -> ok[0] = success), cmd);
+			if (!ok[0])
+				helper.fail("command rejected: " + cmd);
+		}
+		helper.runAfterDelay(5, () -> {
+			if (!(helper.getBlockEntity(new BlockPos(1, 2, 3)) instanceof SonicPulveriserBlockEntity be))
+				throw new IllegalStateException("no pulveriser BE");
+			if (be.getSpeed() == 0)
+				helper.fail("command-placed motor is not driving the pulveriser (speed 0)", new BlockPos(0, 2, 3));
+		});
+		helper.succeedWhen(() -> {
+			if (!helper.getBlockState(stoneRel).isAir())
+				helper.fail("Stone not broken in command-only setup", stoneRel);
+		});
+	}
+
+	/** A pump on a chamber must not drain the chamber's inputs (only its outputs). */
+	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 200)
+	public static void chamberInputsAreNotPumpedOut(GameTestHelper helper) {
+		BlockPos chamber = new BlockPos(2, 1, 3);
+		BlockPos pump = new BlockPos(3, 1, 3);
+		BlockPos tank = new BlockPos(4, 1, 3);
+		BlockPos pumpMotor = new BlockPos(3, 3, 3);
+		BlockPos pumpCog = new BlockPos(3, 2, 3);
+		helper.setBlock(chamber, COBlocks.RESONANCE_CHAMBER.getDefaultState().setValue(BasinBlock.FACING, Direction.DOWN));
+		helper.setBlock(pump, COBlocks.RESONANCE_PUMP.getDefaultState().setValue(PumpBlock.FACING, Direction.EAST));
+		helper.setBlock(tank, AllBlocks.FLUID_TANK.getDefaultState());
+		helper.setBlock(pumpCog, AllBlocks.COGWHEEL.getDefaultState().setValue(RotatedPillarKineticBlock.AXIS, Direction.Axis.X));
+		helper.setBlock(pumpMotor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.DOWN));
+		IFluidHandler chamberTank = helper.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, helper.absolutePos(chamber), null);
+		if (chamberTank.fill(new FluidStack((net.minecraft.world.level.material.Fluid) COFluids.STEAM.getSource(), 250), FluidAction.EXECUTE) != 250)
+			helper.fail("Could not feed steam into the chamber input", chamber);
+		if (helper.getBlockEntity(pumpMotor) instanceof CreativeMotorBlockEntity motorBE)
+			motorBE.generatedSpeed.setValue(64);
+		helper.runAfterDelay(120, () -> {
+			if (!hasFluid(chamberTank, COFluids.STEAM.get()))
+				helper.fail("Pump drained the chamber's input steam", chamber);
+			IFluidHandler sink = helper.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, helper.absolutePos(tank), null);
+			if (hasFluid(sink, COFluids.STEAM.get()))
+				helper.fail("Input steam ended up in the tank", tank);
+			helper.succeed();
+		});
+	}
+
 	/** Solid path, half 2: quartz vapour condenses to water plus quartz, delivered to a depot below. */
 	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 300)
 	public static void condenseVapourToQuartz(GameTestHelper helper) {

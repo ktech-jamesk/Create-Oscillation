@@ -33,6 +33,8 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.items.IItemHandler;
+import co.pyragon.jamoss.content.fluid.FluidViews.ExtractOnly;
+import co.pyragon.jamoss.content.fluid.FluidViews.InsertOnly;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
@@ -349,26 +351,6 @@ public class CondenserBlockEntity extends FluidTankBlockEntity {
 		public boolean isFluidValid(FluidStack stack) {
 			return COFluidTags.isGas(stack);
 		}
-	}
-
-	private record InsertOnly(IFluidHandler wrapped) implements IFluidHandler {
-		public int getTanks() { return wrapped.getTanks(); }
-		public FluidStack getFluidInTank(int tank) { return wrapped.getFluidInTank(tank); }
-		public int getTankCapacity(int tank) { return wrapped.getTankCapacity(tank); }
-		public boolean isFluidValid(int tank, FluidStack stack) { return wrapped.isFluidValid(tank, stack); }
-		public int fill(FluidStack resource, FluidAction action) { return wrapped.fill(resource, action); }
-		public FluidStack drain(FluidStack resource, FluidAction action) { return FluidStack.EMPTY; }
-		public FluidStack drain(int maxDrain, FluidAction action) { return FluidStack.EMPTY; }
-	}
-
-	private record ExtractOnly(IFluidHandler wrapped) implements IFluidHandler {
-		public int getTanks() { return wrapped.getTanks(); }
-		public FluidStack getFluidInTank(int tank) { return wrapped.getFluidInTank(tank); }
-		public int getTankCapacity(int tank) { return wrapped.getTankCapacity(tank); }
-		public boolean isFluidValid(int tank, FluidStack stack) { return false; }
-		public int fill(FluidStack resource, FluidAction action) { return 0; }
-		public FluidStack drain(FluidStack resource, FluidAction action) { return wrapped.drain(resource, action); }
-		public FluidStack drain(int maxDrain, FluidAction action) { return wrapped.drain(maxDrain, action); }
 	}
 
 	private static class ExtractOnlyItems extends net.neoforged.neoforge.items.wrapper.RangedWrapper {

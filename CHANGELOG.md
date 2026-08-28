@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1
+
+- Pipes and pumps can no longer drain a Resonance/Cavitation Chamber's *input* fluids; only outputs are extractable.
+  Previously a Resonance Pump next to a chamber would pull out steam that had just been fed in.
+- Dev tooling: `./gradlew runShowcase` captures GIF footage from a shot list in the showcase world.
+
 ## 1.0.0
 
 First release, for Minecraft 1.21.1 / NeoForge / Create 6.0.11+.

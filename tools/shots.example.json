@@ -1,0 +1,334 @@
+{
+  "fps": 10,
+  "setup": [
+    "time set 6000",
+    "gamerule doDaylightCycle false",
+    "weather clear",
+    "setblock 150 63 32 create:creative_motor[facing=east] keep",
+    "setblock 151 63 32 createoscillation:sonic_pulveriser[facing=east] keep",
+    "fill 256 62 22 292 82 56 air",
+    "fill 256 55 22 292 61 56 sand",
+    "fill 256 62 22 292 74 22 sand",
+    "fill 256 62 22 256 74 56 sand",
+    "fill 292 62 22 292 74 56 sand",
+    "setblock 262 63 32 create:fluid_tank keep",
+    "setblock 263 63 32 create:mechanical_pump[facing=east] keep",
+    "setblock 263 64 32 create:cogwheel[axis=x] keep",
+    "setblock 263 65 32 create:creative_motor[facing=down] keep",
+    "setblock 264 63 32 createoscillation:resonance_chamber[facing=down] keep",
+    "setblock 264 64 32 createoscillation:resonator keep",
+    "setblock 264 65 32 create:shaft[axis=y] keep",
+    "setblock 264 66 32 create:creative_motor[facing=down] keep",
+    "setblock 265 63 32 create:mechanical_pump[facing=east] keep",
+    "setblock 265 64 32 create:cogwheel[axis=x] keep",
+    "setblock 265 65 32 create:creative_motor[facing=down] keep",
+    "setblock 266 63 32 createoscillation:cavitation_chamber[facing=down] keep",
+    "setblock 266 64 32 createoscillation:resonator keep",
+    "setblock 266 65 32 create:shaft[axis=y] keep",
+    "setblock 266 66 32 create:creative_motor[facing=down] keep",
+    "setblock 267 63 32 createoscillation:resonance_pump[facing=east] keep",
+    "setblock 267 64 32 create:cogwheel[axis=x] keep",
+    "setblock 267 65 32 create:creative_motor[facing=down] keep",
+    "setblock 268 62 32 create:depot keep",
+    "setblock 268 63 32 createoscillation:condenser keep",
+    "setblock 269 63 32 create:mechanical_pump[facing=east] keep",
+    "setblock 269 64 32 create:cogwheel[axis=x] keep",
+    "setblock 269 65 32 create:creative_motor[facing=down] keep",
+    "setblock 270 63 32 create:fluid_tank keep",
+    "data merge block 264 66 32 {ScrollValue:128}",
+    "data merge block 266 66 32 {ScrollValue:256}",
+    "fill 142 62 168 172 82 196 air",
+    "fill 142 55 168 172 61 196 sand",
+    "fill 142 62 168 172 74 168 sand",
+    "fill 142 62 168 142 74 196 sand",
+    "fill 172 62 168 172 74 196 sand",
+    "setblock 150 62 180 createoscillation:resonance_emitter[facing=east] keep",
+    "setblock 150 63 180 createoscillation:resonator keep",
+    "setblock 150 64 180 create:shaft[axis=y] keep",
+    "setblock 150 65 180 create:creative_motor[facing=down] keep",
+    "setblock 160 62 180 createoscillation:resonance_receiver[facing=east] keep",
+    "fill 161 62 180 164 62 180 create:shaft[axis=x] keep",
+    "setblock 165 62 180 create:cogwheel[axis=x] keep",
+    "data merge block 150 65 180 {ScrollValue:64}"
+  ],
+  "shots": [
+    {
+      "name": "logo",
+      "from": [
+        120.4,
+        62.7,
+        31.5
+      ],
+      "yaw": -90.2,
+      "pitch": -2.0,
+      "fov": 50,
+      "lead": 20,
+      "ticks": 120,
+      "commands": [],
+      "title": {
+        "anchor": "bottom-center",
+        "width": 0.55,
+        "margin": 0
+      }
+    },
+    {
+      "name": "pulveriser_low",
+      "from": [
+        153.5,
+        63.0,
+        43.5
+      ],
+      "yaw": 180,
+      "pitch": -2,
+      "fov": 60,
+      "lead": 30,
+      "ticks": 110,
+      "commands": [
+        {
+          "at": -30,
+          "run": "fill 152 60 26 160 70 38 air"
+        },
+        {
+          "at": -29,
+          "run": "fill 153 60 29 156 66 35 stone"
+        },
+        {
+          "at": -29,
+          "run": "setblock 153 62 30 iron_ore"
+        },
+        {
+          "at": -29,
+          "run": "setblock 153 65 34 iron_ore"
+        },
+        {
+          "at": -29,
+          "run": "setblock 154 61 31 copper_ore"
+        },
+        {
+          "at": -29,
+          "run": "setblock 155 64 33 iron_ore"
+        },
+        {
+          "at": -29,
+          "run": "setblock 153 60 35 copper_ore"
+        },
+        {
+          "at": -28,
+          "run": "data remove block 151 63 32 ActiveBand"
+        },
+        {
+          "at": -28,
+          "run": "data merge block 151 63 32 {Inventory:{Items:[],Size:2},Charge:0}"
+        },
+        {
+          "at": 20,
+          "run": "data merge block 151 63 32 {Inventory:{Items:[{Slot:0b,id:\"createoscillation:tuned_crystal_low\",count:1}],Size:2},Charge:0}"
+        }
+      ],
+      "captions": [
+        {
+          "text": "Sonic Pulveriser with a Low-Tuned Crystal: one block, one deep",
+          "at": 0,
+          "until": 110,
+          "anchor": "top-right"
+        }
+      ]
+    },
+    {
+      "name": "pulveriser_ultrasonic",
+      "from": [
+        153.5,
+        63.0,
+        43.5
+      ],
+      "yaw": 180,
+      "pitch": -2,
+      "fov": 60,
+      "lead": 30,
+      "ticks": 160,
+      "commands": [
+        {
+          "at": -30,
+          "run": "fill 152 60 26 160 70 38 air"
+        },
+        {
+          "at": -29,
+          "run": "fill 153 60 29 156 66 35 stone"
+        },
+        {
+          "at": -29,
+          "run": "setblock 153 62 30 iron_ore"
+        },
+        {
+          "at": -29,
+          "run": "setblock 153 65 34 iron_ore"
+        },
+        {
+          "at": -29,
+          "run": "setblock 154 61 31 copper_ore"
+        },
+        {
+          "at": -29,
+          "run": "setblock 155 64 33 iron_ore"
+        },
+        {
+          "at": -29,
+          "run": "setblock 153 60 35 copper_ore"
+        },
+        {
+          "at": -28,
+          "run": "data remove block 151 63 32 ActiveBand"
+        },
+        {
+          "at": -28,
+          "run": "data merge block 151 63 32 {Inventory:{Items:[],Size:2},Charge:0}"
+        },
+        {
+          "at": 20,
+          "run": "data merge block 151 63 32 {Inventory:{Items:[{Slot:0b,id:\"createoscillation:tuned_crystal_ultrasonic\",count:1}],Size:2},Charge:0}"
+        }
+      ],
+      "captions": [
+        {
+          "text": "Ultrasonic Crystal: a 7x7 face, four blocks deep",
+          "at": 0,
+          "until": 160,
+          "anchor": "top-right"
+        }
+      ]
+    },
+    {
+      "name": "ore_line",
+      "from": [
+        266.5,
+        64.2,
+        47.5
+      ],
+      "yaw": 180,
+      "pitch": 4,
+      "fov": 50,
+      "lead": 30,
+      "ticks": 400,
+      "commands": [
+        {
+          "at": -30,
+          "run": "kill @e[type=item]"
+        },
+        {
+          "at": -30,
+          "run": "data merge block 262 63 32 {TankContent:{Fluid:{id:\"minecraft:water\",amount:8000}}}"
+        },
+        {
+          "at": -30,
+          "run": "data remove block 270 63 32 TankContent"
+        },
+        {
+          "at": -30,
+          "run": "data merge block 264 63 32 {InputItems:{Items:[{Slot:0,id:\"minecraft:raw_iron\",count:8}],Size:9}}"
+        },
+        {
+          "at": -30,
+          "run": "data merge block 266 63 32 {InputTanks:[{TankContent:{Fluid:{id:\"createoscillation:steam\",amount:1000}}}]}"
+        }
+      ],
+      "captions": [
+        {
+          "text": "Raw ore + water resonate into ore slurry (High band)",
+          "at": 0,
+          "until": 130,
+          "anchor": "top-right"
+        },
+        {
+          "text": "Slurry + steam cavitate into metal vapour (Ultrasonic)",
+          "at": 130,
+          "until": 260,
+          "anchor": "top-right"
+        },
+        {
+          "text": "The Condenser turns vapour into 2.5 ingots' worth of concentrate",
+          "at": 260,
+          "until": 400,
+          "anchor": "top-right"
+        }
+      ]
+    },
+    {
+      "name": "coupler",
+      "from": [
+        157.5,
+        64.5,
+        197.5
+      ],
+      "yaw": 180,
+      "pitch": 6,
+      "fov": 50,
+      "lead": 30,
+      "ticks": 360,
+      "commands": [
+        {
+          "at": -30,
+          "run": "fill 151 62 180 159 62 180 air"
+        },
+        {
+          "at": -30,
+          "run": "data merge block 150 62 180 {Crystal:{Items:[],Size:1}}"
+        },
+        {
+          "at": -30,
+          "run": "data merge block 160 62 180 {Crystal:{Items:[],Size:1}}"
+        },
+        {
+          "at": 20,
+          "run": "data merge block 150 62 180 {Crystal:{Items:[{Slot:0,id:\"createoscillation:tuned_crystal_mid\",count:1}],Size:1}}"
+        },
+        {
+          "at": 80,
+          "run": "data merge block 160 62 180 {Crystal:{Items:[{Slot:0,id:\"createoscillation:tuned_crystal_mid\",count:1}],Size:1}}"
+        },
+        {
+          "at": 220,
+          "run": "setblock 155 62 180 stone"
+        },
+        {
+          "at": 290,
+          "run": "setblock 155 62 180 air"
+        }
+      ],
+      "captions": [
+        {
+          "text": "A Resonance Emitter under a Resonator beams vibration through open air",
+          "at": 20,
+          "until": 80,
+          "anchor": "top-right"
+        },
+        {
+          "text": "A Receiver with a matching crystal turns it back into rotation",
+          "at": 80,
+          "until": 220,
+          "anchor": "top-right"
+        },
+        {
+          "text": "Anything solid in the way breaks the link",
+          "at": 220,
+          "until": 290,
+          "anchor": "top-right"
+        },
+        {
+          "text": "Clear the path and the link returns",
+          "at": 290,
+          "until": 360,
+          "anchor": "top-right"
+        }
+      ]
+    }
+  ],
+  "_help": "Coordinates are from the 'showcase' dev world. Machines are placed with 'setblock ... keep' and never removed: Create's kinetic network breaks if a kinetic block is removed and re-placed in the same tick, so reset only the surroundings (walls, fluids, fuel via data merge). 'at' is in ticks relative to the end of the shot's lead; negative values run during the lead, before the first frame.",
+  "between": [
+    "kill @e[type=item]"
+  ],
+  "title": {
+    "anchor": "bottom-left",
+    "width": 0.275,
+    "margin": 8
+  }
+}
