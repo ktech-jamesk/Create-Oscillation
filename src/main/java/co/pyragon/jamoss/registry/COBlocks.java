@@ -200,7 +200,6 @@ public class COBlocks {
 		.transform(pickaxeOnly())
 		.blockstate(NonNullBiConsumer.noop())
 		.addLayer(() -> RenderType::cutoutMipped)
-		.onRegister(block -> BlockStressValues.IMPACTS.register(block, () -> 4.0))
 		.onRegister(movementBehaviour(new PulveriserMovementBehaviour()))
 		.lang("Sonic Pulveriser")
 		.item()

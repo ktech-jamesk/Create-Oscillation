@@ -55,7 +55,7 @@ jobs:
         with:
           name: "Create: Oscillation ${{ github.ref_name }}"
           body_path: release-notes.md
-          files: build/libs/createoscillation-${{ steps.version.outputs.version }}.jar
+          files: build/libs/createoscillation-*-${{ steps.version.outputs.version }}.jar
 
       - name: Commit the version bump to main
         run: |

@@ -11,7 +11,6 @@ import com.simibubi.create.content.kinetics.base.BlockBreakingKineticBlockEntity
 import com.simibubi.create.foundation.utility.BlockHelper;
 
 import co.pyragon.jamoss.content.frequency.FrequencyBand;
-import co.pyragon.jamoss.registry.COItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -27,26 +26,25 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * The Sonic Pulveriser's breaking rules, shared by the block entity (stationary) and the
- * contraption actor. A crystal sets the tier: how far it reaches, how wide the cross-section is,
- * how hard a block it can crack, and how fast. The nearest layer of breakable blocks within reach
- * cracks together and shatters together.
+ * contraption actor. The crystal ladder sets the tier: how far it reaches, how wide the
+ * cross-section is, how hard a block it can crack, and how fast. The nearest layer of breakable
+ * blocks within reach cracks together and shatters together.
  */
 public final class PulveriserLogic {
 
 	private PulveriserLogic() {}
 
 	/** @param radius cross-section half-width (0 = 1×1, 1 = 3×3 ...) */
-	/** @param charge how many durability points one crystal of this tier provides */
-	public record Tier(FrequencyBand band, int reach, int radius, float hardnessCap, float breakSpeed, int charge) {
+	public record Tier(FrequencyBand band, int reach, int radius, float hardnessCap, float breakSpeed) {
 		public int width() {
 			return radius * 2 + 1;
 		}
 	}
 
-	public static final Tier LOW = new Tier(FrequencyBand.LOW, 1, 0, 3f, 0.5f, 512);
-	public static final Tier MID = new Tier(FrequencyBand.MID, 2, 1, 5f, 1f, 1024);
-	public static final Tier HIGH = new Tier(FrequencyBand.HIGH, 3, 2, 50f, 2f, 2048);
-	public static final Tier ULTRASONIC = new Tier(FrequencyBand.ULTRASONIC, 4, 3, Float.MAX_VALUE, 4f, 4096);
+	public static final Tier LOW = new Tier(FrequencyBand.LOW, 1, 0, 3f, 0.5f);
+	public static final Tier MID = new Tier(FrequencyBand.MID, 2, 1, 5f, 1f);
+	public static final Tier HIGH = new Tier(FrequencyBand.HIGH, 3, 2, 50f, 2f);
+	public static final Tier ULTRASONIC = new Tier(FrequencyBand.ULTRASONIC, 4, 3, Float.MAX_VALUE, 4f);
 
 	@Nullable
 	public static Tier tierOf(@Nullable FrequencyBand band) {
@@ -59,11 +57,6 @@ public final class PulveriserLogic {
 			case ULTRASONIC -> ULTRASONIC;
 			default -> null;
 		};
-	}
-
-	@Nullable
-	public static Tier tierOf(ItemStack crystal) {
-		return tierOf(COItems.bandOf(crystal.getItem()));
 	}
 
 	public static boolean canBreak(Level level, BlockPos pos, BlockState state, Tier tier, Predicate<BlockState> filter) {
@@ -108,11 +101,6 @@ public final class PulveriserLogic {
 		return max;
 	}
 
-	/** Durability cost of breaking {@code state}: 1 plus one per five hardness. */
-	public static int crystalCost(Level level, BlockPos pos, BlockState state) {
-		return 1 + (int) (Math.max(0, state.getDestroySpeed(level, pos)) / 5);
-	}
-
 	public static void showCracks(Level level, int breakerId, List<BlockPos> layer, int progress) {
 		for (int i = 0; i < layer.size(); i++)
 			level.destroyBlockProgress(breakerId - i, layer.get(i), progress);
@@ -122,18 +110,15 @@ public final class PulveriserLogic {
 		showCracks(level, breakerId, layer, -1);
 	}
 
-	/** Breaks every block of the layer; returns the total crystal durability cost. */
-	public static int breakLayer(Level level, List<BlockPos> layer, Consumer<ItemStack> drops) {
-		int cost = 0;
+	/** Breaks every block of the layer. */
+	public static void breakLayer(Level level, List<BlockPos> layer, Consumer<ItemStack> drops) {
 		for (BlockPos pos : layer) {
 			BlockState state = level.getBlockState(pos);
 			if (state.isAir())
 				continue;
-			cost += crystalCost(level, pos, state);
 			level.playSound(null, pos, state.getSoundType(level, pos, null).getBreakSound(), SoundSource.BLOCKS, .5f, .8f);
 			BlockHelper.destroyBlock(level, pos, 1f, drops);
 		}
-		return cost;
 	}
 
 	/** Progress step for one tick against the hardest block of the layer, like Create's drill. */

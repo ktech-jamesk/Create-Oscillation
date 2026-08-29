@@ -35,13 +35,12 @@ public class ResonanceAmplifierBlock extends Block implements IBE<ResonanceAmpli
 	@Override
 	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
 		InteractionHand hand, BlockHitResult hit) {
-		return getBlockEntityOptional(level, pos).map(be -> use(be, stack, level, pos, player))
+		return getBlockEntityOptional(level, pos).map(be -> use(be.crystals, stack, level, pos, player))
 			.orElse(ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION);
 	}
 
-	/** A crystal goes into its band's slot if free; an empty hand pops the highest crystal out. */
-	static ItemInteractionResult use(ResonanceAmplifierBlockEntity be, ItemStack held, Level level, BlockPos pos, Player player) {
-		CrystalLadder ladder = be.crystals;
+	/** A crystal goes into its band's slot if free; an empty hand pops the highest crystal out. Shared with the Pulveriser. */
+	public static ItemInteractionResult use(CrystalLadder ladder, ItemStack held, Level level, BlockPos pos, Player player) {
 		if (!held.isEmpty()) {
 			FrequencyBand band = COItems.bandOf(held.getItem());
 			if (band == null)

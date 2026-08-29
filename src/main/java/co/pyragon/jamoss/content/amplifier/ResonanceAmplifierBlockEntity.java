@@ -29,7 +29,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
 /**
  * Sits under a Resonator and re-emits its vibration at the band its crystal ladder reaches. If the
@@ -38,7 +37,7 @@ import net.neoforged.neoforge.items.IItemHandlerModifiable;
 public class ResonanceAmplifierBlockEntity extends SmartBlockEntity implements VibrationSource, IHaveGoggleInformation {
 
 	public final CrystalLadder crystals = new CrystalLadder(this::onCrystalsChanged);
-	private final IItemHandler insertOnly = new InsertOnly(crystals);
+	private final IItemHandler insertOnly = crystals.insertOnly();
 
 	public ResonanceAmplifierBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
@@ -157,38 +156,5 @@ public class ResonanceAmplifierBlockEntity extends SmartBlockEntity implements V
 
 	private static LangBuilder lang() {
 		return new LangBuilder(CreateOscillation.MOD_ID);
-	}
-
-	/** Hoppers and funnels may feed crystals in but never pull them out. */
-	private record InsertOnly(IItemHandlerModifiable inner) implements IItemHandler {
-		@Override
-		public int getSlots() {
-			return inner.getSlots();
-		}
-
-		@Override
-		public ItemStack getStackInSlot(int slot) {
-			return inner.getStackInSlot(slot);
-		}
-
-		@Override
-		public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-			return inner.insertItem(slot, stack, simulate);
-		}
-
-		@Override
-		public ItemStack extractItem(int slot, int amount, boolean simulate) {
-			return ItemStack.EMPTY;
-		}
-
-		@Override
-		public int getSlotLimit(int slot) {
-			return inner.getSlotLimit(slot);
-		}
-
-		@Override
-		public boolean isItemValid(int slot, ItemStack stack) {
-			return inner.isItemValid(slot, stack);
-		}
 	}
 }

@@ -13,8 +13,9 @@ import co.pyragon.jamoss.compat.ponder.COPonderStructures;
 import co.pyragon.jamoss.content.frequency.FrequencyBand;
 import com.simibubi.create.AllItems;
 import co.pyragon.jamoss.content.pulveriser.SonicPulveriserBlockEntity;
-import co.pyragon.jamoss.content.pulveriser.PulveriserInventory;
+import com.simibubi.create.content.contraptions.glue.SuperGlueEntity;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import co.pyragon.jamoss.content.coupler.ResonanceReceiverBlockEntity;
@@ -791,13 +792,58 @@ public class COGameTests {
 
 	/**
 	 * Pulveriser riding a mechanical piston: piston (2,2,3) facing east with two poles behind it and a creative motor
-	 * above; the pulveriser (3,2,3) sits in front and is pushed two blocks east. Sand sits off the piston line (a
-	 * piston would push anything directly ahead) within the Mid tier's 3×3 layer. Verifies the contraption actor breaks
-	 * blocks while moving and that the burnt charge is written back to the block entity when the contraption disassembles.
+	 * above; the pulveriser (3,2,3) sits in front with its Resonator glued on top and is pushed two blocks east. Stone
+	 * sits off the piston line (a piston would push anything directly ahead) within the Mid tier's 3×3 layer. Verifies
+	 * the contraption actor breaks blocks while moving and the ladder crystals survive disassembly.
 	 */
 	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 900)
 	public static void pulveriserOnPistonContraption(GameTestHelper helper) {
-		BlockPos motor = new BlockPos(2, 3, 3);
+		BlockPos motor = new BlockPos(2, 4, 3);
+		BlockPos piston = new BlockPos(2, 2, 3);
+		BlockPos pulveriser = new BlockPos(3, 2, 3);
+		BlockPos resonator = new BlockPos(3, 3, 3);
+		BlockPos landing = new BlockPos(5, 2, 3);
+		for (int x = 0; x <= 1; x++)
+			helper.setBlock(new BlockPos(x, 2, 3), AllBlocks.PISTON_EXTENSION_POLE.getDefaultState()
+				.setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING, Direction.EAST));
+		helper.setBlock(piston, AllBlocks.MECHANICAL_PISTON.getDefaultState()
+			.setValue(DirectionalKineticBlock.FACING, Direction.EAST)
+			.setValue(com.simibubi.create.content.kinetics.base.DirectionalAxisKineticBlock.AXIS_ALONG_FIRST_COORDINATE, true));
+		helper.setBlock(pulveriser, COBlocks.SONIC_PULVERISER.getDefaultState().setValue(DirectionalBlock.FACING, Direction.EAST));
+		helper.setBlock(resonator, COBlocks.RESONATOR.getDefaultState());
+		helper.getLevel().addFreshEntity(new SuperGlueEntity(helper.getLevel(),
+			SuperGlueEntity.span(helper.absolutePos(pulveriser), helper.absolutePos(resonator))));
+		if (!(helper.getBlockEntity(pulveriser) instanceof SonicPulveriserBlockEntity be))
+			throw new IllegalStateException("Pulveriser block entity missing");
+		fillLadder(be.crystals, FrequencyBand.MID);
+		BlockPos[] stone = { new BlockPos(6, 3, 3), new BlockPos(7, 1, 3) };
+		for (BlockPos s : stone)
+			helper.setBlock(s, Blocks.STONE.defaultBlockState());
+		helper.setBlock(new BlockPos(2, 3, 3), AllBlocks.SHAFT.getDefaultState().setValue(RotatedPillarKineticBlock.AXIS, Direction.Axis.Y));
+		helper.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.DOWN));
+		if (helper.getBlockEntity(motor) instanceof CreativeMotorBlockEntity motorBE)
+			motorBE.generatedSpeed.setValue(8);
+		else
+			helper.fail("Creative motor missing", motor);
+		helper.succeedWhen(() -> {
+			for (BlockPos s : stone)
+				if (!helper.getBlockState(s).isAir())
+					helper.fail("Stone not broken by the moving pulveriser", s);
+			if (!(helper.getBlockEntity(landing) instanceof SonicPulveriserBlockEntity landed))
+				helper.fail("Pulveriser has not landed at the end of the stroke", landing);
+			else {
+				if (!helper.getBlockState(landing.above()).is(COBlocks.RESONATOR.get()))
+					helper.fail("Resonator did not ride along above the pulveriser", landing.above());
+				if (landed.crystals.band() != FrequencyBand.MID)
+					helper.fail("Ladder crystals did not survive disassembly: " + landed.saveWithoutMetadata(helper.getLevel().registryAccess()), landing);
+			}
+		});
+	}
+
+	/** Without a Resonator riding above it, the mounted Pulveriser does nothing. */
+	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 900)
+	public static void pulveriserOnContraptionNeedsResonator(GameTestHelper helper) {
+		BlockPos motor = new BlockPos(2, 4, 3);
 		BlockPos piston = new BlockPos(2, 2, 3);
 		BlockPos pulveriser = new BlockPos(3, 2, 3);
 		BlockPos landing = new BlockPos(5, 2, 3);
@@ -807,39 +853,61 @@ public class COGameTests {
 		helper.setBlock(piston, AllBlocks.MECHANICAL_PISTON.getDefaultState()
 			.setValue(DirectionalKineticBlock.FACING, Direction.EAST)
 			.setValue(com.simibubi.create.content.kinetics.base.DirectionalAxisKineticBlock.AXIS_ALONG_FIRST_COORDINATE, true));
-		helper.setBlock(pulveriser, COBlocks.SONIC_PULVERISER.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.EAST));
+		helper.setBlock(pulveriser, COBlocks.SONIC_PULVERISER.getDefaultState().setValue(DirectionalBlock.FACING, Direction.EAST));
 		if (!(helper.getBlockEntity(pulveriser) instanceof SonicPulveriserBlockEntity be))
 			throw new IllegalStateException("Pulveriser block entity missing");
-		be.inventory.setStackInSlot(PulveriserInventory.CRYSTALS, COItems.TUNED_CRYSTAL_MID.asStack());
-		BlockPos[] sand = { new BlockPos(6, 3, 3), new BlockPos(7, 1, 3) };
-		for (BlockPos s : sand)
-			helper.setBlock(s, Blocks.STONE.defaultBlockState());
+		fillLadder(be.crystals, FrequencyBand.MID);
+		BlockPos stone = new BlockPos(6, 3, 3);
+		helper.setBlock(stone, Blocks.STONE.defaultBlockState());
+		helper.setBlock(new BlockPos(2, 3, 3), AllBlocks.SHAFT.getDefaultState().setValue(RotatedPillarKineticBlock.AXIS, Direction.Axis.Y));
 		helper.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.DOWN));
 		if (helper.getBlockEntity(motor) instanceof CreativeMotorBlockEntity motorBE)
 			motorBE.generatedSpeed.setValue(8);
 		else
 			helper.fail("Creative motor missing", motor);
 		helper.succeedWhen(() -> {
-			for (BlockPos s : sand)
-				if (!helper.getBlockState(s).isAir())
-					helper.fail("Stone not broken by the moving pulveriser", s);
-			if (!(helper.getBlockEntity(landing) instanceof SonicPulveriserBlockEntity landed))
+			if (!(helper.getBlockEntity(landing) instanceof SonicPulveriserBlockEntity))
 				helper.fail("Pulveriser has not landed at the end of the stroke", landing);
-			else {
-				if (!landed.inventory.getStackInSlot(PulveriserInventory.CRYSTALS).isEmpty())
-					helper.fail("Crystal was not consumed on the contraption: " + landed.saveWithoutMetadata(helper.getLevel().registryAccess()), landing);
-				if (landed.getTier() == null || landed.getCharge() <= 0)
-					helper.fail("Burning charge was not written back on disassembly: tier=" + landed.getTier() + " charge=" + landed.getCharge(), landing);
-				if (landed.getCharge() >= 1024)
-					helper.fail("Charge was not spent: " + landed.getCharge(), landing);
-			}
+			if (!helper.getBlockState(stone).is(Blocks.STONE))
+				helper.fail("Pulveriser broke stone without a resonator above it", stone);
 		});
 	}
 
-	/** Mid crystal: a 3x3 stone wall two blocks ahead is cleared. */
+	/**
+	 * Radial setup: motor (3,1,3) → mechanical bearing (3,2,3) facing up spins a pulveriser (3,3,3) with its
+	 * resonator glued on top in place around the Y axis. The pulveriser sits on the rotation axis (zero motion,
+	 * only its facing sweeps) and must still break the stone ring around it.
+	 */
+	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 900)
+	public static void pulveriserOnRadialBearing(GameTestHelper helper) {
+		BlockPos motor = new BlockPos(3, 1, 3);
+		BlockPos bearing = new BlockPos(3, 2, 3);
+		BlockPos pulveriser = new BlockPos(3, 3, 3);
+		BlockPos resonator = new BlockPos(3, 4, 3);
+		helper.setBlock(bearing, AllBlocks.MECHANICAL_BEARING.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.UP));
+		helper.setBlock(pulveriser, COBlocks.SONIC_PULVERISER.getDefaultState().setValue(DirectionalBlock.FACING, Direction.EAST));
+		helper.setBlock(resonator, COBlocks.RESONATOR.getDefaultState());
+		helper.getLevel().addFreshEntity(new SuperGlueEntity(helper.getLevel(),
+			SuperGlueEntity.span(helper.absolutePos(pulveriser), helper.absolutePos(resonator))));
+		if (!(helper.getBlockEntity(pulveriser) instanceof SonicPulveriserBlockEntity be))
+			throw new IllegalStateException("Pulveriser block entity missing");
+		fillLadder(be.crystals, FrequencyBand.MID);
+		BlockPos[] ring = { new BlockPos(4, 3, 3), new BlockPos(2, 3, 3), new BlockPos(3, 3, 2), new BlockPos(3, 3, 4) };
+		for (BlockPos s : ring)
+			helper.setBlock(s, Blocks.STONE.defaultBlockState());
+		helper.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.UP));
+		setMotorSpeed(helper, motor, 4);
+		helper.succeedWhen(() -> {
+			for (BlockPos s : ring)
+				if (!helper.getBlockState(s).isAir())
+					helper.fail("Radial pulveriser has not broken this side of the ring yet", s);
+		});
+	}
+
+	/** Mid ladder + Mid-band resonator: a 3x3 stone wall two blocks ahead is cleared. */
 	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 300)
 	public static void pulveriserClearsLayer(GameTestHelper helper) {
-		pulveriserRig(helper, COItems.TUNED_CRYSTAL_MID.asStack());
+		pulveriserRig(helper, FrequencyBand.MID, 64);
 		for (int y = 1; y <= 3; y++)
 			for (int z = 2; z <= 4; z++)
 				helper.setBlock(new BlockPos(3, y, z), Blocks.STONE.defaultBlockState());
@@ -851,28 +919,78 @@ public class COGameTests {
 		});
 	}
 
-	/** Low crystal cannot crack obsidian; High can. */
+	/** A Low ladder cannot crack obsidian; a High one (with the resonator retuned to High) can. */
 	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 400)
 	public static void pulveriserHardnessCap(GameTestHelper helper) {
-		SonicPulveriserBlockEntity be = pulveriserRig(helper, COItems.TUNED_CRYSTAL_LOW.asStack());
+		SonicPulveriserBlockEntity be = pulveriserRig(helper, FrequencyBand.LOW, 32);
 		BlockPos obsidian = new BlockPos(2, 2, 3);
 		helper.setBlock(obsidian, Blocks.OBSIDIAN.defaultBlockState());
 		helper.runAfterDelay(120, () -> {
 			if (!helper.getBlockState(obsidian).is(Blocks.OBSIDIAN))
-				helper.fail("Low crystal broke obsidian", obsidian);
-			be.inventory.setStackInSlot(PulveriserInventory.CRYSTALS, COItems.TUNED_CRYSTAL_HIGH.asStack());
-			be.dropActiveCrystal();
+				helper.fail("Low ladder broke obsidian", obsidian);
+			fillLadder(be.crystals, FrequencyBand.HIGH);
+			setMotorSpeed(helper, new BlockPos(1, 5, 3), 128);
 		});
 		helper.succeedWhen(() -> {
 			if (helper.getBlockState(obsidian).is(Blocks.OBSIDIAN))
-				helper.fail("High crystal has not broken obsidian yet", obsidian);
+				helper.fail("High ladder has not broken obsidian yet", obsidian);
+		});
+	}
+
+	/** The resonator's band must match the ladder exactly: Low input on a Mid ladder does nothing. */
+	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 400)
+	public static void pulveriserBandMustMatch(GameTestHelper helper) {
+		pulveriserRig(helper, FrequencyBand.MID, 32);
+		BlockPos stone = new BlockPos(2, 2, 3);
+		helper.setBlock(stone, Blocks.STONE.defaultBlockState());
+		helper.runAfterDelay(100, () -> {
+			if (!helper.getBlockState(stone).is(Blocks.STONE))
+				helper.fail("Mid ladder ran on a Low-band resonator", stone);
+			setMotorSpeed(helper, new BlockPos(1, 5, 3), 64);
+		});
+		helper.succeedWhen(() -> {
+			if (helper.getBlockState(stone).is(Blocks.STONE))
+				helper.fail("Stone not broken after retuning to Mid", stone);
+		});
+	}
+
+	/** An Amplifier above works as the source when its ladder band matches the Pulveriser's; a higher one does not. */
+	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 400)
+	public static void pulveriserAmplifierSource(GameTestHelper helper) {
+		BlockPos motor = new BlockPos(1, 5, 3);
+		BlockPos shaft = new BlockPos(1, 4, 3);
+		BlockPos resonator = new BlockPos(1, 3, 3);
+		BlockPos amplifier = new BlockPos(1, 2, 3);
+		BlockPos pulveriser = new BlockPos(1, 1, 3);
+		helper.setBlock(pulveriser, COBlocks.SONIC_PULVERISER.getDefaultState().setValue(DirectionalBlock.FACING, Direction.EAST));
+		helper.setBlock(amplifier, COBlocks.RESONANCE_AMPLIFIER.getDefaultState());
+		helper.setBlock(resonator, COBlocks.RESONATOR.getDefaultState());
+		helper.setBlock(shaft, AllBlocks.SHAFT.getDefaultState().setValue(RotatedPillarKineticBlock.AXIS, Direction.Axis.Y));
+		helper.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.DOWN));
+		if (!(helper.getBlockEntity(pulveriser) instanceof SonicPulveriserBlockEntity be))
+			throw new IllegalStateException("Pulveriser block entity missing");
+		if (!(helper.getBlockEntity(amplifier) instanceof co.pyragon.jamoss.content.amplifier.ResonanceAmplifierBlockEntity amp))
+			throw new IllegalStateException("Amplifier block entity missing");
+		fillLadder(be.crystals, FrequencyBand.LOW);
+		fillLadder(amp.crystals, FrequencyBand.MID); // amplifier emits Mid, pulveriser tuned Low: mismatch
+		setMotorSpeed(helper, motor, 16);
+		BlockPos stone = new BlockPos(2, 1, 3);
+		helper.setBlock(stone, Blocks.STONE.defaultBlockState());
+		helper.runAfterDelay(100, () -> {
+			if (!helper.getBlockState(stone).is(Blocks.STONE))
+				helper.fail("Pulveriser ran under a mismatched amplifier", stone);
+			amp.crystals.setStackInSlot(co.pyragon.jamoss.content.amplifier.CrystalLadder.slotOf(FrequencyBand.MID), ItemStack.EMPTY);
+		});
+		helper.succeedWhen(() -> {
+			if (helper.getBlockState(stone).is(Blocks.STONE))
+				helper.fail("Stone not broken under a Low amplifier; amp band=" + amp.getLadderBand() + " speed=" + amp.getVibrationSpeed(), stone);
 		});
 	}
 
 	/** Filter set to cobblestone: cobble goes, stone stays. */
 	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 300)
 	public static void pulveriserRespectsFilter(GameTestHelper helper) {
-		SonicPulveriserBlockEntity be = pulveriserRig(helper, COItems.TUNED_CRYSTAL_MID.asStack());
+		SonicPulveriserBlockEntity be = pulveriserRig(helper, FrequencyBand.MID, 64);
 		be.filtering.setFilter(new ItemStack(Items.COBBLESTONE));
 		BlockPos stone = new BlockPos(2, 2, 3);
 		BlockPos cobble = new BlockPos(2, 3, 3);
@@ -887,54 +1005,46 @@ public class COGameTests {
 		});
 	}
 
-	/** Breaking spends charge; a nearly spent crystal leaves a rough crystal in the output slot and the next one is consumed. */
+	/** Crystals feed through the item capability into their band's rung, nothing comes out, and none are ever consumed. */
 	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 300)
-	public static void pulveriserSpendsCharge(GameTestHelper helper) {
-		SonicPulveriserBlockEntity be = pulveriserRig(helper, COItems.TUNED_CRYSTAL_LOW.asStack(2));
-		be.setCharge(FrequencyBand.LOW, 1);
+	public static void pulveriserLadderContract(GameTestHelper helper) {
+		SonicPulveriserBlockEntity be = pulveriserRig(helper, null, 64);
+		IItemHandler handler = helper.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, helper.absolutePos(new BlockPos(1, 2, 3)), null);
+		if (handler == null)
+			helper.fail("Pulveriser exposes no item handler");
+		if (!ItemHandlerHelper.insertItem(handler, COItems.TUNED_CRYSTAL_MID.asStack(), false).isEmpty())
+			helper.fail("Could not insert a Mid crystal through the handler");
+		if (be.crystals.getStackInSlot(co.pyragon.jamoss.content.amplifier.CrystalLadder.slotOf(FrequencyBand.MID)).isEmpty())
+			helper.fail("Mid crystal did not land in the Mid rung");
+		if (!ItemHandlerHelper.insertItem(handler, COItems.TUNED_CRYSTAL_LOW.asStack(), false).isEmpty())
+			helper.fail("Could not insert a Low crystal through the handler");
+		if (!ItemHandlerHelper.insertItem(handler, new ItemStack(Items.STONE), true).is(Items.STONE))
+			helper.fail("Handler accepted a non-crystal");
+		for (int slot = 0; slot < handler.getSlots(); slot++)
+			if (!handler.extractItem(slot, 1, true).isEmpty())
+				helper.fail("Handler let seated crystals be extracted");
 		BlockPos stone = new BlockPos(2, 2, 3);
 		helper.setBlock(stone, Blocks.STONE.defaultBlockState());
 		helper.succeedWhen(() -> {
 			if (!helper.getBlockState(stone).isAir())
 				helper.fail("Stone not broken", stone);
-			if (!be.inventory.getStackInSlot(PulveriserInventory.SPENT).is(COItems.ROUGH_QUARTZ_CRYSTAL.get()))
-				helper.fail("No rough crystal in the spent slot", stone);
-			if (be.inventory.getStackInSlot(PulveriserInventory.CRYSTALS).getCount() != 2)
-				helper.fail("Waiting crystals changed unexpectedly", stone);
+			if (be.crystals.band() != FrequencyBand.MID)
+				helper.fail("Crystals were consumed by breaking blocks", stone);
 		});
 	}
 
-	/** Crystals can be fed through the item capability (hoppers/funnels); spent crystals come out of it. */
-	@GameTest(template = "gametest/empty_8x6x8")
-	public static void pulveriserInventoryContract(GameTestHelper helper) {
-		SonicPulveriserBlockEntity be = pulveriserRig(helper, ItemStack.EMPTY);
-		IItemHandler handler = helper.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, helper.absolutePos(new BlockPos(1, 2, 3)), null);
-		if (handler == null)
-			helper.fail("Pulveriser exposes no item handler");
-		if (!ItemHandlerHelper.insertItem(handler, COItems.TUNED_CRYSTAL_MID.asStack(3), false).isEmpty())
-			helper.fail("Could not insert crystals through the handler");
-		if (!ItemHandlerHelper.insertItem(handler, new ItemStack(Items.STONE), true).is(Items.STONE))
-			helper.fail("Handler accepted a non-crystal");
-		if (!handler.extractItem(PulveriserInventory.CRYSTALS, 1, true).isEmpty())
-			helper.fail("Handler let waiting crystals be extracted");
-		be.inventory.setStackInSlot(PulveriserInventory.SPENT, COItems.ROUGH_QUARTZ_CRYSTAL.asStack(2));
-		if (handler.extractItem(PulveriserInventory.SPENT, 2, false).getCount() != 2)
-			helper.fail("Could not extract spent crystals through the handler");
-		helper.succeed();
-	}
-
-	/** No crystal: nothing happens. Block entities are never broken. */
+	/** No crystals: nothing happens. Block entities are never broken. */
 	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 300)
 	public static void pulveriserIdleAndSafe(GameTestHelper helper) {
-		SonicPulveriserBlockEntity be = pulveriserRig(helper, ItemStack.EMPTY);
+		SonicPulveriserBlockEntity be = pulveriserRig(helper, null, 64);
 		BlockPos stone = new BlockPos(2, 2, 3);
 		BlockPos chest = new BlockPos(2, 3, 3);
 		helper.setBlock(stone, Blocks.STONE.defaultBlockState());
 		helper.setBlock(chest, Blocks.CHEST.defaultBlockState());
 		helper.runAfterDelay(80, () -> {
 			if (!helper.getBlockState(stone).is(Blocks.STONE))
-				helper.fail("Broke a block with no crystal", stone);
-			be.inventory.setStackInSlot(PulveriserInventory.CRYSTALS, COItems.TUNED_CRYSTAL_MID.asStack());
+				helper.fail("Broke a block with no crystals", stone);
+			fillLadder(be.crystals, FrequencyBand.MID);
 		});
 		helper.runAfterDelay(250, () -> {
 			if (!helper.getBlockState(stone).isAir())
@@ -945,36 +1055,58 @@ public class COGameTests {
 		});
 	}
 
-	/** Hand-built setup: motor at its default speed, crystal inserted by right-click, every other face covered. */
+	/** Hand-built setup: crystal inserted by right-click, every free side face covered with stone. */
 	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 400)
 	public static void pulveriserManualSetup(GameTestHelper helper) {
-		BlockPos motor = new BlockPos(1, 2, 3);
-		BlockPos pulveriser = new BlockPos(2, 2, 3);
-		helper.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.EAST));
-		helper.setBlock(pulveriser, COBlocks.SONIC_PULVERISER.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.EAST));
+		SonicPulveriserBlockEntity be = pulveriserRig(helper, null, 32);
+		BlockPos pulveriser = new BlockPos(1, 2, 3);
 		for (Direction d : Direction.values())
-			if (d != Direction.WEST)
-				helper.setBlock(pulveriser.relative(d), Blocks.SAND.defaultBlockState());
-		SonicPulveriserBlockEntity be = (SonicPulveriserBlockEntity) helper.getBlockEntity(pulveriser);
+			if (d != Direction.UP)
+				helper.setBlock(pulveriser.relative(d), Blocks.STONE.defaultBlockState());
 		var player = helper.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
 		ItemStack held = COItems.TUNED_CRYSTAL_LOW.asStack();
 		player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, held);
 		helper.getBlockState(pulveriser).useItemOn(held, helper.getLevel(), player, net.minecraft.world.InteractionHand.MAIN_HAND,
 			new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(helper.absolutePos(pulveriser)), Direction.NORTH, helper.absolutePos(pulveriser), false));
-		if (be.inventory.getStackInSlot(PulveriserInventory.CRYSTALS).isEmpty())
+		if (be.crystals.band() != FrequencyBand.LOW)
 			helper.fail("Crystal was not inserted by right-click path", pulveriser);
 		helper.succeedWhen(() -> {
-			if (Math.abs(be.getSpeed()) == 0)
-				helper.fail("Pulveriser has no speed from the motor", pulveriser);
+			if (!be.isDriven())
+				helper.fail("Pulveriser not driven by the resonator; input=" + be.getInputBand() + " tier=" + be.getTier(), pulveriser);
 			if (!helper.getBlockState(pulveriser.east()).isAir())
-				helper.fail("Sand in front not broken; working=" + be.isWorking() + " speed=" + be.getSpeed() + " tier=" + be.getTier(), pulveriser.east());
+				helper.fail("Sand in front not broken; working=" + be.isWorking() + " tier=" + be.getTier(), pulveriser.east());
+		});
+	}
+
+	/** Drops go into an inventory below the drop point (the block in front) instead of spilling on the ground. */
+	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 300)
+	public static void pulveriserDropsIntoInventoryBelow(GameTestHelper helper) {
+		pulveriserRig(helper, FrequencyBand.LOW, 32);
+		BlockPos stone = new BlockPos(2, 2, 3);
+		BlockPos chest = new BlockPos(2, 1, 3);
+		helper.setBlock(chest, Blocks.CHEST.defaultBlockState());
+		helper.setBlock(stone, Blocks.STONE.defaultBlockState());
+		helper.succeedWhen(() -> {
+			if (!helper.getBlockState(stone).isAir())
+				helper.fail("Stone not broken", stone);
+			IItemHandler chestInv = helper.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, helper.absolutePos(chest), Direction.UP);
+			if (chestInv == null)
+				helper.fail("Chest exposes no item handler", chest);
+			boolean found = false;
+			for (int i = 0; i < chestInv.getSlots(); i++)
+				if (chestInv.getStackInSlot(i).is(Items.COBBLESTONE))
+					found = true;
+			if (!found)
+				helper.fail("Drops did not land in the chest below the drop point", chest);
+			if (!helper.getEntities(net.minecraft.world.entity.EntityType.ITEM, stone, 2).isEmpty())
+				helper.fail("Drops spilled on the ground despite the chest", stone);
 		});
 	}
 
 	/** A crystal can't be set as the filter (that would match nothing and silently disable the machine). */
 	@GameTest(template = "gametest/empty_8x6x8")
 	public static void pulveriserFilterRejectsCrystals(GameTestHelper helper) {
-		SonicPulveriserBlockEntity be = pulveriserRig(helper, COItems.TUNED_CRYSTAL_MID.asStack());
+		SonicPulveriserBlockEntity be = pulveriserRig(helper, FrequencyBand.MID, 64);
 		if (be.filtering.setFilter(COItems.TUNED_CRYSTAL_MID.asStack()))
 			helper.fail("Filter accepted a crystal");
 		if (!be.filtering.getFilter().isEmpty())
@@ -984,30 +1116,46 @@ public class COGameTests {
 		helper.succeed();
 	}
 
-	/** Motor (0,2,3) facing east → pulveriser (1,2,3) facing east. Targets sit at x >= 2. */
-	private static SonicPulveriserBlockEntity pulveriserRig(GameTestHelper helper, ItemStack crystal) {
-		BlockPos motor = new BlockPos(0, 2, 3);
+	/** Motor (1,5,3) facing down → shaft (1,4,3) → resonator (1,3,3) → pulveriser (1,2,3) facing east. Targets sit at x >= 2. */
+	private static SonicPulveriserBlockEntity pulveriserRig(GameTestHelper helper, @org.jetbrains.annotations.Nullable FrequencyBand ladder, int rpm) {
+		BlockPos motor = new BlockPos(1, 5, 3);
+		BlockPos shaft = new BlockPos(1, 4, 3);
+		BlockPos resonator = new BlockPos(1, 3, 3);
 		BlockPos pulveriser = new BlockPos(1, 2, 3);
-		helper.setBlock(pulveriser, COBlocks.SONIC_PULVERISER.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.EAST));
-		helper.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.EAST));
+		helper.setBlock(pulveriser, COBlocks.SONIC_PULVERISER.getDefaultState().setValue(DirectionalBlock.FACING, Direction.EAST));
+		helper.setBlock(resonator, COBlocks.RESONATOR.getDefaultState());
+		helper.setBlock(shaft, AllBlocks.SHAFT.getDefaultState().setValue(RotatedPillarKineticBlock.AXIS, Direction.Axis.Y));
+		helper.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.DOWN));
 		if (!(helper.getBlockEntity(pulveriser) instanceof SonicPulveriserBlockEntity be))
 			throw new IllegalStateException("Pulveriser block entity missing");
-		be.inventory.setStackInSlot(PulveriserInventory.CRYSTALS, crystal);
-		if (helper.getBlockEntity(motor) instanceof CreativeMotorBlockEntity motorBE)
-			motorBE.generatedSpeed.setValue(32);
-		else
-			helper.fail("Creative motor missing", motor);
+		fillLadder(be.crystals, ladder);
+		setMotorSpeed(helper, motor, rpm);
 		return be;
 	}
 
-	/** The showcase shot list feeds crystals with /data merge; make sure that NBT shape lands in the inventory. */
+	/** Fills every rung up to and including {@code band} with its Tuned Crystal. */
+	private static void fillLadder(co.pyragon.jamoss.content.amplifier.CrystalLadder ladder, @org.jetbrains.annotations.Nullable FrequencyBand band) {
+		if (band == null)
+			return;
+		for (int i = 0; i <= co.pyragon.jamoss.content.amplifier.CrystalLadder.slotOf(band); i++)
+			ladder.setStackInSlot(i, COItems.tunedCrystal(co.pyragon.jamoss.content.amplifier.CrystalLadder.RUNGS[i]).asStack());
+	}
+
+	private static void setMotorSpeed(GameTestHelper helper, BlockPos motor, int rpm) {
+		if (helper.getBlockEntity(motor) instanceof CreativeMotorBlockEntity motorBE)
+			motorBE.generatedSpeed.setValue(rpm);
+		else
+			helper.fail("Creative motor missing", motor);
+	}
+
+	/** The showcase shot list feeds crystals with /data merge; make sure that NBT shape lands in the ladder. */
 	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 200)
 	public static void pulveriserAcceptsDataMerge(GameTestHelper helper) {
-		SonicPulveriserBlockEntity be = pulveriserRig(helper, ItemStack.EMPTY);
+		SonicPulveriserBlockEntity be = pulveriserRig(helper, null, 32);
 		BlockPos stone = new BlockPos(2, 2, 3);
 		helper.setBlock(stone, Blocks.STONE.defaultBlockState());
 		BlockPos abs = helper.absolutePos(new BlockPos(1, 2, 3));
-		String cmd = String.format("data merge block %d %d %d {Inventory:{Items:[{Slot:0b,id:\"createoscillation:tuned_crystal_low\",count:1}],Size:2},Charge:0}",
+		String cmd = String.format("data merge block %d %d %d {Crystals:{Items:[{Slot:0b,id:\"createoscillation:tuned_crystal_low\",count:1}],Size:4}}",
 			abs.getX(), abs.getY(), abs.getZ());
 		var server = helper.getLevel().getServer();
 		boolean[] ok = { false };
@@ -1015,8 +1163,8 @@ public class COGameTests {
 			.withCallback((success, result) -> ok[0] = success), cmd);
 		if (!ok[0])
 			helper.fail("data merge command was rejected", new BlockPos(1, 2, 3));
-		if (!be.inventory.getStackInSlot(PulveriserInventory.CRYSTALS).is(COItems.TUNED_CRYSTAL_LOW.get()))
-			helper.fail("Crystal not in inventory after data merge: " + be.inventory.getStackInSlot(0), new BlockPos(1, 2, 3));
+		if (be.crystals.band() != FrequencyBand.LOW)
+			helper.fail("Crystal not in ladder after data merge: " + be.crystals.getStackInSlot(0), new BlockPos(1, 2, 3));
 		helper.succeedWhen(() -> {
 			if (!helper.getBlockState(stone).isAir())
 				helper.fail("Stone not broken after data-merged crystal", stone);
@@ -1027,15 +1175,20 @@ public class COGameTests {
 	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 300)
 	public static void pulveriserCommandOnlySetup(GameTestHelper helper) {
 		var server = helper.getLevel().getServer();
-		BlockPos motor = helper.absolutePos(new BlockPos(0, 2, 3));
+		BlockPos motor = helper.absolutePos(new BlockPos(1, 5, 3));
+		BlockPos shaft = helper.absolutePos(new BlockPos(1, 4, 3));
+		BlockPos resonator = helper.absolutePos(new BlockPos(1, 3, 3));
 		BlockPos pulveriser = helper.absolutePos(new BlockPos(1, 2, 3));
 		BlockPos stoneRel = new BlockPos(2, 2, 3);
 		BlockPos stone = helper.absolutePos(stoneRel);
 		java.util.List<String> cmds = java.util.List.of(
-			String.format("setblock %d %d %d create:creative_motor[facing=east]", motor.getX(), motor.getY(), motor.getZ()),
 			String.format("setblock %d %d %d createoscillation:sonic_pulveriser[facing=east]", pulveriser.getX(), pulveriser.getY(), pulveriser.getZ()),
+			String.format("setblock %d %d %d createoscillation:resonator", resonator.getX(), resonator.getY(), resonator.getZ()),
+			String.format("setblock %d %d %d create:shaft[axis=y]", shaft.getX(), shaft.getY(), shaft.getZ()),
+			String.format("setblock %d %d %d create:creative_motor[facing=down]", motor.getX(), motor.getY(), motor.getZ()),
+			String.format("data merge block %d %d %d {ScrollValue:32}", motor.getX(), motor.getY(), motor.getZ()),
 			String.format("fill %d %d %d %d %d %d stone", stone.getX(), stone.getY(), stone.getZ(), stone.getX(), stone.getY(), stone.getZ()),
-			String.format("data merge block %d %d %d {Inventory:{Items:[{Slot:0b,id:\"createoscillation:tuned_crystal_low\",count:1}],Size:2},Charge:0}",
+			String.format("data merge block %d %d %d {Crystals:{Items:[{Slot:0b,id:\"createoscillation:tuned_crystal_low\",count:1}],Size:4}}",
 				pulveriser.getX(), pulveriser.getY(), pulveriser.getZ()));
 		for (String cmd : cmds) {
 			boolean[] ok = { false };
@@ -1047,8 +1200,8 @@ public class COGameTests {
 		helper.runAfterDelay(5, () -> {
 			if (!(helper.getBlockEntity(new BlockPos(1, 2, 3)) instanceof SonicPulveriserBlockEntity be))
 				throw new IllegalStateException("no pulveriser BE");
-			if (be.getSpeed() == 0)
-				helper.fail("command-placed motor is not driving the pulveriser (speed 0)", new BlockPos(0, 2, 3));
+			if (be.getInputBand() == null)
+				helper.fail("command-placed motor is not driving the resonator", new BlockPos(1, 3, 3));
 		});
 		helper.succeedWhen(() -> {
 			if (!helper.getBlockState(stoneRel).isAir())

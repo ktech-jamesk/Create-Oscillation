@@ -125,8 +125,9 @@ public class COPonderStructures {
 			b.put(3, 1, 8, shaft(Axis.Z));
 		}));
 		map.put(PULVERISER, plate(7, 5, 5, b -> {
-			b.put(0, 2, 2, shaft(Axis.X));
-			b.put(1, 2, 2, COBlocks.SONIC_PULVERISER.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.EAST));
+			b.put(1, 2, 2, COBlocks.SONIC_PULVERISER.getDefaultState().setValue(net.minecraft.world.level.block.DirectionalBlock.FACING, Direction.EAST));
+			b.put(1, 3, 2, COBlocks.RESONATOR.getDefaultState());
+			b.put(1, 4, 2, shaft(Axis.Y));
 			b.fill(3, 1, 1, 4, 3, 3, Blocks.STONE.defaultBlockState());
 			b.put(3, 2, 2, Blocks.IRON_ORE.defaultBlockState());
 			b.put(4, 1, 1, Blocks.COBBLESTONE.defaultBlockState());

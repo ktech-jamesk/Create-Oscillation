@@ -4,7 +4,7 @@
 
 **Vibration as energy. Gases as a processing medium.**
 
-An addon for [Create](https://github.com/Creators-of-Create/Create) that turns rotation into *frequency* — and frequency into a whole new tier of processing.
+An addon for [Create](https://github.com/Creators-of-Create/Create) that turns rotation into *frequency* - and frequency into a whole new tier of processing.
 
 [![CurseForge](https://img.shields.io/badge/CurseForge-Create%3A%20Oscillation-f16436?style=flat-square&logo=curseforge&logoColor=white)](https://www.curseforge.com/minecraft/mc-mods/create-oscillation)
 ![Minecraft 1.21.1](https://img.shields.io/badge/Minecraft-1.21.1-5b8c3a?style=flat-square)
@@ -22,11 +22,11 @@ A **Resonator** turns any shaft into vibration, and its speed picks one of four 
 
 From there the mod adds:
 
-- **Gases as Create fluids** — Sonic Mist (cold ultrasonic water mist), quartz vapour and metal vapours that flow through pipes, sit in tanks and get condensed back into liquids and solids.
-- **Tuned crystals** — grown tier by tier, then used to tune, power and fuel the brass-age machines.
-- **Wireless rotation** — a Resonance Emitter and Receiver pass a kinetic network across open air.
-- **The Sonic Pulveriser** — a crystal-fuelled machine that shatters whole layers of blocks, on its own or on a contraption.
-- **Ore multiplication** — a data-driven chain giving 2.5 ingots per raw ore; packs add metals with JSON only.
+- **Gases as Create fluids** - Sonic Mist (cold ultrasonic water mist), quartz vapour and metal vapours that flow through pipes, sit in tanks and get condensed back into liquids and solids.
+- **Tuned crystals** - grown tier by tier, then used to tune, power and fuel the brass-age machines.
+- **Wireless rotation** - a Resonance Emitter and Receiver pass a kinetic network across open air.
+- **The Sonic Pulveriser** - a crystal-tuned, Resonator-driven machine that shatters whole layers of blocks, on its own or on a contraption.
+- **Ore multiplication** - a data-driven chain giving 2.5 ingots per raw ore; packs add metals with JSON only.
 
 Every block has a Ponder scene (hover the item, press <kbd>W</kbd>).
 
@@ -52,4 +52,4 @@ Versions live in `gradle.properties`. Releases are cut by pushing a `vX.Y.Z` tag
 
 ## License & credits
 
-MIT — see [LICENSE](LICENSE). Some textures are recoloured from Create's and the Resonance Pump reuses Create's mechanical pump geometry; thank you to the Creators of Create.
+MIT - see [LICENSE](LICENSE). Some textures are recoloured from Create's and the Resonance Pump reuses Create's mechanical pump geometry; thank you to the Creators of Create.

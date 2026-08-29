@@ -267,6 +267,7 @@ def main():
     ap.add_argument('--title-anchor', default=None, help='override every shot: bottom-center, bottom-left, top-right...')
     ap.add_argument('--title-width', type=float, default=None, help='override every shot: title width as a fraction of the frame width')
     ap.add_argument('--font-size', type=int, default=0, help='caption font size in px (default: width / 28)')
+    ap.add_argument('--all', action='store_true', help='regenerate every captured folder, not just the shots in manifest.tsv')
     args = ap.parse_args()
 
     if not os.path.isdir(SRC):
@@ -274,10 +275,15 @@ def main():
     os.makedirs(args.out, exist_ok=True)
     titles = load_manifest()
     stills = []
+    skipped = []
     for folder in sorted(glob.glob(os.path.join(SRC, '*'))):
         if not os.path.isdir(folder):
             continue
         name = os.path.basename(folder)
+        # only shots captured by the last run (the manifest) regenerate; stale folders are left alone
+        if titles and not args.all and name not in titles:
+            skipped.append(name)
+            continue
         out = os.path.join(args.out, name + '.gif')
         override = None
         if args.title_anchor or args.title_width:
@@ -295,6 +301,8 @@ def main():
         stills.append((titles.get(name, name), still))
     contact_sheet(stills, os.path.join(args.out, 'contact_sheet.png'))
     print(f'{len(stills)} gifs written to {args.out}')
+    if skipped:
+        print(f'skipped (not in manifest.tsv, use --all to include): {", ".join(skipped)}')
 
 
 if __name__ == '__main__':

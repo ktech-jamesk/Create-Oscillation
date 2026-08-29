@@ -58,9 +58,9 @@ public class CreateOscillation {
 		REGISTRATE.addRawLang("createoscillation.gui.goggles.frequency", "Frequency:");
 		REGISTRATE.addRawLang("createoscillation.gui.goggles.tuning_fork", "Tuned to:");
 		REGISTRATE.addRawLang("createoscillation.gui.goggles.coupler.no_crystal", "no crystal");
-		REGISTRATE.addRawLang("createoscillation.gui.goggles.pulveriser.no_crystal", "Needs a Tuned Crystal");
-		REGISTRATE.addRawLang("createoscillation.gui.goggles.pulveriser.no_rotation", "Not turning");
-		REGISTRATE.addRawLang("createoscillation.gui.goggles.pulveriser.fuel", "Fuel: %s / %s");
+		REGISTRATE.addRawLang("createoscillation.gui.goggles.pulveriser.no_crystal", "Needs Tuned Crystals");
+		REGISTRATE.addRawLang("createoscillation.gui.goggles.pulveriser.no_vibration", "Needs a Resonator above");
+		REGISTRATE.addRawLang("createoscillation.gui.goggles.pulveriser.wrong_band", "%s input, tuned to %s");
 		REGISTRATE.addRawLang("createoscillation.gui.goggles.pulveriser.nothing", "Nothing breakable in reach");
 		REGISTRATE.addRawLang("createoscillation.gui.goggles.pulveriser.working", "Pulverising");
 		REGISTRATE.addRawLang("createoscillation.gui.goggles.coupler.linked", "Linked to a receiver %s blocks away");

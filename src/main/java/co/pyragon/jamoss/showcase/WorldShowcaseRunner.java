@@ -57,6 +57,9 @@ public class WorldShowcaseRunner {
 
 	public static class Shot {
 		public String name;
+		/** "disabled": true skips this shot. "enabled": true on any shot turns the run into a whitelist of just those. */
+		public boolean disabled;
+		public Boolean enabled;
 		public double[] from;
 		public double[] to;
 		public float yaw;
@@ -141,7 +144,16 @@ public class WorldShowcaseRunner {
 			finish(mc);
 			return false;
 		}
-		LOGGER.info("[Showcase] {} shots loaded from {}", list.shots.size(), file);
+		int total = list.shots.size();
+		list.shots.removeIf(s -> s.disabled);
+		if (list.shots.stream().anyMatch(s -> Boolean.TRUE.equals(s.enabled)))
+			list.shots.removeIf(s -> !Boolean.TRUE.equals(s.enabled));
+		if (list.shots.isEmpty()) {
+			LOGGER.error("[Showcase] {} has no enabled shots ({} total)", file, total);
+			finish(mc);
+			return false;
+		}
+		LOGGER.info("[Showcase] {} of {} shots selected from {}", list.shots.size(), total, file);
 		return true;
 	}
 

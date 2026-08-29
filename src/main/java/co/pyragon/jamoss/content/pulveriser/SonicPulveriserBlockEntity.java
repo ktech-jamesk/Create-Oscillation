@@ -4,17 +4,18 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.BlockBreakingKineticBlockEntity;
-import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
-import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.CenteredSideValueBoxTransform;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 
 import co.pyragon.jamoss.CreateOscillation;
+import co.pyragon.jamoss.content.amplifier.CrystalLadder;
 import co.pyragon.jamoss.content.frequency.FrequencyBand;
-import co.pyragon.jamoss.registry.COItems;
 import co.pyragon.jamoss.content.pulveriser.PulveriserLogic.Tier;
+import co.pyragon.jamoss.content.vibration.VibrationSource;
 import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -22,24 +23,28 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.Containers;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 
-public class SonicPulveriserBlockEntity extends KineticBlockEntity {
+/**
+ * Driven by a VibrationSource (Resonator or Amplifier) directly above it, like the Chamber and
+ * Sieve. The crystal ladder sets the tier; it runs only while the source's band exactly equals the
+ * ladder's band. Crystals are seated, never consumed.
+ */
+public class SonicPulveriserBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
 
-	public final PulveriserInventory inventory = new PulveriserInventory(this::onInventoryChanged);
+	public final CrystalLadder crystals = new CrystalLadder(this::onCrystalsChanged);
 	public FilteringBehaviour filtering;
-	/** Band of the crystal currently burning, null when none has been consumed yet. */
-	@Nullable
-	private FrequencyBand activeBand;
-	/** Remaining charge of the burning crystal. */
-	private int charge;
 
 	private final int breakerId = -BlockBreakingKineticBlockEntity.NEXT_BREAKER_ID.addAndGet(64);
 	private List<BlockPos> layer = List.of();
@@ -54,129 +59,58 @@ public class SonicPulveriserBlockEntity extends KineticBlockEntity {
 
 	public static void registerCapabilities(RegisterCapabilitiesEvent event) {
 		event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, co.pyragon.jamoss.registry.COBlockEntityTypes.SONIC_PULVERISER.get(),
-			(be, ctx) -> be.inventory.external());
+			(be, ctx) -> be.crystals.insertOnly());
 	}
 
 	@Override
 	public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
-		super.addBehaviours(behaviours);
 		filtering = new FilteringBehaviour(this, new FilterSlot())
-			// crystals go in the crystal slot, never into the filter (a crystal filter matches no block)
+			// crystals go into the ladder, never into the filter (a crystal filter matches no block)
 			.withPredicate(stack -> co.pyragon.jamoss.registry.COItems.bandOf(stack.getItem()) == null);
 		behaviours.add(filtering);
 	}
 
-	/** Filter box centred on every side face, slid toward the shaft end. */
+	/** Filter box centred on every side face, slid toward the back. */
 	private static class FilterSlot extends CenteredSideValueBoxTransform {
 		FilterSlot() {
-			super((state, dir) -> dir.getAxis() != state.getValue(DirectionalKineticBlock.FACING).getAxis());
+			super((state, dir) -> dir.getAxis() != state.getValue(DirectionalBlock.FACING).getAxis());
 		}
 
 		@Override
 		public net.minecraft.world.phys.Vec3 getLocalOffset(net.minecraft.world.level.LevelAccessor level, BlockPos pos, BlockState state) {
 			net.minecraft.world.phys.Vec3 base = super.getLocalOffset(level, pos, state);
-			Direction back = state.getValue(DirectionalKineticBlock.FACING).getOpposite();
+			Direction back = state.getValue(DirectionalBlock.FACING).getOpposite();
 			return base.add(back.getStepX() * 4.5 / 16, back.getStepY() * 4.5 / 16, back.getStepZ() * 4.5 / 16);
 		}
 	}
 
 	public Direction getFacing() {
-		return getBlockState().getValue(DirectionalKineticBlock.FACING);
+		return getBlockState().getValue(DirectionalBlock.FACING);
 	}
 
-	/** The tier in use: the burning crystal's, or the next crystal waiting in the slot. */
+	/** Tier the ladder reaches, or null while the Low rung is empty. */
 	@Nullable
 	public Tier getTier() {
-		if (activeBand != null)
-			return PulveriserLogic.tierOf(activeBand);
-		return PulveriserLogic.tierOf(inventory.getStackInSlot(PulveriserInventory.CRYSTALS));
+		return PulveriserLogic.tierOf(crystals.band());
 	}
 
-	public int getCharge() {
-		return charge;
+	/** Band of the vibration source above, null when idle or absent. */
+	@Nullable
+	public FrequencyBand getInputBand() {
+		return FrequencyBand.of(VibrationSource.speedAbove(level, worldPosition));
 	}
 
-	public boolean hasFuel() {
-		return activeBand != null || !inventory.getStackInSlot(PulveriserInventory.CRYSTALS).isEmpty()
-			|| !inventory.getStackInSlot(PulveriserInventory.SPENT).isEmpty();
-	}
-
-	/** The crystal shown inside the housing: the one burning, else the next waiting one. */
-	public ItemStack getDisplayedCrystal() {
-		if (activeBand != null)
-			return COItems.tunedCrystal(activeBand).asStack();
-		return inventory.getStackInSlot(PulveriserInventory.CRYSTALS);
-	}
-
-	/** Hands every crystal back; the burning one always comes back as a rough crystal (its charge is gone). */
-	public void ejectFuel(@Nullable net.minecraft.world.entity.player.Player player) {
-		java.util.List<ItemStack> out = new java.util.ArrayList<>();
-		if (activeBand != null) {
-			out.add(COItems.ROUGH_QUARTZ_CRYSTAL.asStack());
-			activeBand = null;
-			charge = 0;
-		}
-		for (int slot = 0; slot < inventory.getSlots(); slot++) {
-			ItemStack stack = inventory.getStackInSlot(slot);
-			if (!stack.isEmpty())
-				out.add(stack);
-			inventory.setStackInSlot(slot, ItemStack.EMPTY);
-		}
-		for (ItemStack stack : out) {
-			if (player != null)
-				player.getInventory().placeItemBackInInventory(stack);
-			else
-				net.minecraft.world.Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), stack);
-		}
-		reset();
-		level.playSound(null, worldPosition, net.minecraft.sounds.SoundEvents.AMETHYST_BLOCK_BREAK, net.minecraft.sounds.SoundSource.BLOCKS, .6f, .9f);
-		sendData();
-	}
-
-	/** Sets the burning crystal and its remaining charge directly. */
-	public void setCharge(FrequencyBand band, int remaining) {
-		activeBand = band;
-		charge = remaining;
-	}
-
-	/** Discards the burning crystal so the next waiting one is consumed. */
-	public void dropActiveCrystal() {
-		activeBand = null;
-		charge = 0;
-	}
-
-	/** Consumes the next waiting crystal when nothing is burning. */
-	private boolean ensureCharged() {
-		if (activeBand != null && charge > 0)
-			return true;
-		ItemStack next = inventory.takeCrystal();
-		Tier tier = PulveriserLogic.tierOf(next);
-		if (tier == null)
-			return false;
-		activeBand = tier.band();
-		charge = tier.charge();
-		sendData();
-		return true;
-	}
-
-	private void spendCharge(int cost) {
-		charge -= cost;
-		if (charge > 0)
-			return;
-		charge = 0;
-		activeBand = null;
-		ItemStack rough = COItems.ROUGH_QUARTZ_CRYSTAL.asStack();
-		ItemStack left = inventory.addSpent(rough);
-		if (!left.isEmpty())
-			net.minecraft.world.Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), left);
-		sendData();
+	/** True while the source above runs in exactly the ladder's band. */
+	public boolean isDriven() {
+		Tier tier = getTier();
+		return tier != null && getInputBand() == tier.band();
 	}
 
 	public boolean isWorking() {
 		return working;
 	}
 
-	private void onInventoryChanged() {
+	private void onCrystalsChanged() {
 		setChanged();
 		sendData();
 	}
@@ -188,15 +122,10 @@ public class SonicPulveriserBlockEntity extends KineticBlockEntity {
 			return;
 
 		Tier tier = getTier();
-		if (tier == null || getSpeed() == 0) {
+		if (tier == null || !isDriven()) {
 			reset();
 			return;
 		}
-		if (!ensureCharged()) {
-			reset();
-			return;
-		}
-		tier = getTier();
 		List<BlockPos> next = PulveriserLogic.findLayer(level, worldPosition, getFacing(), tier,
 			state -> filtering.test(new ItemStack(state.getBlock().asItem())));
 		if (next.isEmpty()) {
@@ -217,8 +146,7 @@ public class SonicPulveriserBlockEntity extends KineticBlockEntity {
 		progress += PulveriserLogic.progressStep(tier, hardness, progress);
 		if (progress >= 10) {
 			PulveriserLogic.clearCracks(level, breakerId, layer);
-			int cost = PulveriserLogic.breakLayer(level, layer, this::dropStack);
-			spendCharge(cost);
+			PulveriserLogic.breakLayer(level, layer, this::dropStack);
 			layer = List.of();
 			progress = 0;
 			cooldown = 0;
@@ -228,10 +156,18 @@ public class SonicPulveriserBlockEntity extends KineticBlockEntity {
 		cooldown = PulveriserLogic.ticksBetweenSteps(tier, hardness);
 	}
 
+	/** Drops land in the inventory below the drop point when there is one; the rest is spat out in front. */
 	private void dropStack(ItemStack stack) {
 		if (stack.isEmpty() || !level.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS))
 			return;
-		Vec3 at = Vec3.atCenterOf(worldPosition.relative(getFacing()));
+		BlockPos front = worldPosition.relative(getFacing());
+		IItemHandler below = level.getCapability(Capabilities.ItemHandler.BLOCK, front.below(), Direction.UP);
+		if (below != null) {
+			stack = ItemHandlerHelper.insertItemStacked(below, stack, false);
+			if (stack.isEmpty())
+				return;
+		}
+		Vec3 at = Vec3.atCenterOf(front);
 		ItemEntity entity = new ItemEntity(level, at.x, at.y, at.z, stack);
 		entity.setDefaultPickUpDelay();
 		entity.setDeltaMovement(Vec3.ZERO);
@@ -266,49 +202,60 @@ public class SonicPulveriserBlockEntity extends KineticBlockEntity {
 		super.destroy();
 		if (level == null)
 			return;
-		for (int i = 0; i < inventory.getSlots(); i++)
-			if (!inventory.getStackInSlot(i).isEmpty())
-				net.minecraft.world.Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
-					inventory.getStackInSlot(i));
+		for (int i = 0; i < crystals.getSlots(); i++)
+			if (!crystals.getStackInSlot(i).isEmpty())
+				Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
+					crystals.getStackInSlot(i));
 	}
 
 	@Override
 	protected void write(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
 		super.write(tag, registries, clientPacket);
-		tag.put("Inventory", inventory.serializeNBT(registries));
+		crystals.write(tag, registries);
 		tag.putBoolean("Working", working);
-		tag.putInt("Charge", charge);
-		if (activeBand != null)
-			tag.putString("ActiveBand", activeBand.getSerializedName());
 	}
 
 	@Override
 	protected void read(CompoundTag tag, HolderLookup.Provider registries, boolean clientPacket) {
 		super.read(tag, registries, clientPacket);
-		if (tag.contains("Inventory"))
-			inventory.deserializeNBT(registries, tag.getCompound("Inventory"));
+		crystals.read(tag, registries);
 		working = tag.getBoolean("Working");
-		charge = tag.getInt("Charge");
-		activeBand = tag.contains("ActiveBand") ? FrequencyBand.CODEC.parse(net.minecraft.nbt.NbtOps.INSTANCE,
-			net.minecraft.nbt.StringTag.valueOf(tag.getString("ActiveBand"))).result().orElse(null) : null;
 	}
 
 	@Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-		super.addToGoggleTooltip(tooltip, isPlayerSneaking);
 		Tier tier = getTier();
 		LangBuilder value = tier == null
-			? new LangBuilder(CreateOscillation.MOD_ID).translate("gui.goggles.coupler.no_crystal").style(ChatFormatting.DARK_GRAY)
-			: new LangBuilder(CreateOscillation.MOD_ID).translate("frequency." + tier.band().getSerializedName()).style(ChatFormatting.AQUA);
-		new LangBuilder(CreateOscillation.MOD_ID).translate("gui.goggles.tuning_fork").style(ChatFormatting.GRAY).space().add(value).forGoggles(tooltip);
-		if (tier != null)
-			new LangBuilder(CreateOscillation.MOD_ID).translate("gui.goggles.pulveriser.fuel", activeBand == null ? 0 : charge, tier.charge())
-				.style(ChatFormatting.GRAY).forGoggles(tooltip);
-		String state = tier == null ? "gui.goggles.pulveriser.no_crystal"
-			: getSpeed() == 0 ? "gui.goggles.pulveriser.no_rotation"
-			: working ? "gui.goggles.pulveriser.working" : "gui.goggles.pulveriser.nothing";
-		new LangBuilder(CreateOscillation.MOD_ID).translate(state)
-			.style(working ? ChatFormatting.GREEN : ChatFormatting.GRAY).forGoggles(tooltip);
+			? lang().translate("gui.goggles.coupler.no_crystal").style(ChatFormatting.DARK_GRAY)
+			: lang().translate("frequency." + tier.band().getSerializedName()).style(ChatFormatting.AQUA);
+		lang().translate("gui.goggles.tuning_fork").style(ChatFormatting.GRAY).space().add(value).forGoggles(tooltip);
+
+		LangBuilder rungs = lang().translate("gui.goggles.amplifier.crystals").style(ChatFormatting.GRAY);
+		for (int i = 0; i < CrystalLadder.RUNGS.length; i++) {
+			rungs.space();
+			if (crystals.getStackInSlot(i).isEmpty())
+				rungs.add(lang().text("-").style(ChatFormatting.DARK_GRAY));
+			else
+				rungs.add(lang().translate("frequency." + CrystalLadder.RUNGS[i].getSerializedName()).style(ChatFormatting.AQUA));
+		}
+		rungs.forGoggles(tooltip);
+
+		FrequencyBand input = getInputBand();
+		if (tier == null)
+			lang().translate("gui.goggles.pulveriser.no_crystal").style(ChatFormatting.GRAY).forGoggles(tooltip);
+		else if (input == null)
+			lang().translate("gui.goggles.pulveriser.no_vibration").style(ChatFormatting.GRAY).forGoggles(tooltip);
+		else if (input != tier.band())
+			lang().translate("gui.goggles.pulveriser.wrong_band", input.getDisplayName(), tier.band().getDisplayName())
+				.style(ChatFormatting.RED).forGoggles(tooltip);
+		else if (working)
+			lang().translate("gui.goggles.pulveriser.working").style(ChatFormatting.GREEN).forGoggles(tooltip);
+		else
+			lang().translate("gui.goggles.pulveriser.nothing").style(ChatFormatting.GRAY).forGoggles(tooltip);
 		return true;
+	}
+
+	private static LangBuilder lang() {
+		return new LangBuilder(CreateOscillation.MOD_ID);
 	}
 }

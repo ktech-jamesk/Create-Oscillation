@@ -9,7 +9,6 @@ import co.pyragon.jamoss.content.amplifier.ResonanceAmplifierBlockEntity;
 import co.pyragon.jamoss.content.coupler.ResonanceEmitterBlockEntity;
 import co.pyragon.jamoss.content.coupler.ResonanceReceiverBlockEntity;
 import co.pyragon.jamoss.content.pulveriser.SonicPulveriserBlockEntity;
-import co.pyragon.jamoss.content.pulveriser.PulveriserInventory;
 import net.minecraft.world.level.block.Blocks;
 import co.pyragon.jamoss.registry.COItems;
 import net.createmod.catnip.math.Pointing;
@@ -454,30 +453,40 @@ public class ResonatorScenes {
 
 		BlockPos pulveriser = util.grid().at(1, 2, 2);
 		Selection wall = util.select().fromTo(3, 1, 1, 4, 3, 3);
-		Selection drive = util.select().fromTo(0, 2, 2, 1, 2, 2);
+		Selection machine = util.select().fromTo(1, 2, 2, 1, 4, 2);
+		Selection drive = util.select().fromTo(1, 3, 2, 1, 4, 2);
 
 		scene.world().showSection(wall, Direction.DOWN);
-		scene.world().showSection(drive, Direction.DOWN);
+		scene.world().showSection(machine, Direction.DOWN);
 		scene.idle(10);
-		scene.world().setKineticSpeed(drive, 32);
 		scene.overlay().showText(80)
 			.attachKeyFrame()
-			.text("The Sonic Pulveriser is a Resonator turned sideways: any rotation drives it, but it needs a crystal to do anything")
+			.text("The Sonic Pulveriser fires the vibration of a Resonator on top of it forward as a breaking beam")
 			.pointAt(util.vector().blockSurface(pulveriser, Direction.NORTH))
 			.placeNearTarget();
 		scene.idle(90);
 
-		scene.world().modifyBlockEntity(pulveriser, SonicPulveriserBlockEntity.class,
-			be -> be.inventory.setStackInSlot(PulveriserInventory.CRYSTALS, COItems.TUNED_CRYSTAL_MID.asStack()));
+		scene.world().modifyBlockEntity(pulveriser, SonicPulveriserBlockEntity.class, be -> {
+			be.crystals.setStackInSlot(0, COItems.TUNED_CRYSTAL_LOW.asStack());
+			be.crystals.setStackInSlot(1, COItems.TUNED_CRYSTAL_MID.asStack());
+		});
 		scene.overlay().showControls(util.vector().blockSurface(pulveriser, Direction.NORTH), Pointing.DOWN, 30)
 			.withItem(COItems.TUNED_CRYSTAL_MID.asStack());
 		scene.idle(20);
 		scene.overlay().showText(90)
 			.attachKeyFrame()
-			.text("The crystal is its power and its tier: Low breaks 1 block, Mid 3x3 two deep, High 5x5 three deep, Ultrasonic 7x7 four deep")
+			.text("Crystals seat like in the Amplifier and set the tier: Low breaks 1 block, Mid 3x3 two deep, High 5x5 three deep, Ultrasonic 7x7 four deep")
 			.pointAt(util.vector().blockSurface(pulveriser, Direction.NORTH))
 			.placeNearTarget();
 		scene.idle(100);
+
+		scene.world().setKineticSpeed(drive, 64);
+		scene.overlay().showText(80)
+			.attachKeyFrame()
+			.text("It only runs while the Resonator's frequency matches the crystals' band exactly")
+			.pointAt(util.vector().blockSurface(util.grid().at(1, 3, 2), Direction.WEST))
+			.placeNearTarget();
+		scene.idle(90);
 
 		for (int y = 1; y <= 3; y++)
 			for (int z = 1; z <= 3; z++)
@@ -485,7 +494,7 @@ public class ResonatorScenes {
 		scene.idle(15);
 		scene.overlay().showText(80)
 			.colored(PonderPalette.GREEN)
-			.text("The nearest layer of blocks cracks together and shatters together; harder blocks take longer and cost more crystal")
+			.text("The nearest layer of blocks cracks together and shatters together; harder blocks take longer")
 			.pointAt(util.vector().blockSurface(util.grid().at(3, 2, 2), Direction.NORTH))
 			.placeNearTarget();
 		scene.idle(90);
@@ -503,7 +512,7 @@ public class ResonatorScenes {
 
 		scene.overlay().showText(90)
 			.attachKeyFrame()
-			.text("It burns one crystal at a time, like furnace fuel; hoppers and funnels can keep it fed. A spent crystal leaves a Rough Quartz Crystal to collect")
+			.text("On contraptions it keeps working while moving, as long as its Resonator rides along directly above it")
 			.pointAt(util.vector().blockSurface(pulveriser, Direction.UP))
 			.placeNearTarget();
 		scene.idle(100);

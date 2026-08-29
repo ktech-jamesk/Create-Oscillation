@@ -1,5 +1,21 @@
 # Changelog
 
+## 2.0.0
+
+- **Breaking: Sonic Pulveriser rework.** It is no longer kinetic and no longer burns crystals as fuel. Like the Chamber
+  and Sieve it is driven by a **Resonator (or Amplifier) directly on top**, and like the Amplifier it holds a **crystal
+  ladder**: right-click one crystal of each band in (empty hand takes the top one back; hoppers can feed it), and the
+  highest gap-free band sets the tier (Low 1×1 · Mid 3×3 · High 5×5 · Ultrasonic 7×7). It only runs while the source
+  above vibrates in **exactly** that band; crystals are seated, never consumed. Facing up is no longer possible — the top
+  face belongs to the Resonator. On contraptions the Resonator must ride directly above it (glue them together); an
+  Amplifier works too when its ladder matches. Existing Pulverisers lose their stored fuel crystals and charge on first
+  load; break and re-place them, then seat a ladder. Drops now go into an inventory below the drop point (the block
+  directly in front) when one is there — chest, hopper, depot — and only spill on the ground otherwise. A Pulveriser
+  spun in place on a bearing works as an in-place radial quarry. Like Create's drill, a moving contraption now **stalls**
+  while the Pulveriser cracks a layer and resumes once it shatters, so fast minecarts no longer skip past blocks.
+- The Pulveriser's Ponder scene and goggle readouts (tuning, seated crystals, wrong-band warning) match the new
+  mechanics.
+
 ## 1.2.0
 
 - **Resonance Amplifier.** Sits between a Resonator and the machine below it and re-emits the vibration at the band its
