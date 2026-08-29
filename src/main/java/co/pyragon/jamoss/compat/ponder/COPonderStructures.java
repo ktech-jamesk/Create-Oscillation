@@ -35,6 +35,7 @@ public class COPonderStructures {
 	public static final String ORE_CHAIN = "ore_chain";
 	public static final String COUPLER = "coupler";
 	public static final String PULVERISER = "pulveriser";
+	public static final String AMPLIFIER = "amplifier";
 
 	/** Every structure by path, in a stable order. */
 	public static Map<String, StructureBuilder> all() {
@@ -88,6 +89,12 @@ public class COPonderStructures {
 			b.put(2, 3, 2, COBlocks.TUNING_FORK.getDefaultState());
 			b.put(2, 4, 2, shaft(Axis.Y));
 		}));
+		map.put(AMPLIFIER, plate(5, 6, 5, b -> {
+			b.put(2, 1, 2, chamber());
+			b.put(2, 2, 2, COBlocks.RESONANCE_AMPLIFIER.getDefaultState());
+			b.put(2, 3, 2, COBlocks.RESONATOR.getDefaultState());
+			b.put(2, 4, 2, shaft(Axis.Y));
+		}));
 		map.put(ORE_CHAIN, plate(7, 5, 5, b -> {
 			b.put(0, 1, 2, chamber());
 			b.put(0, 2, 2, COBlocks.RESONATOR.getDefaultState());
@@ -102,13 +109,20 @@ public class COPonderStructures {
 			b.put(5, 2, 2, COBlocks.CONDENSER.getDefaultState());
 			b.put(5, 1, 2, AllBlocks.DEPOT.getDefaultState());
 		}));
-		map.put(COUPLER, plate(9, 5, 5, b -> {
-			b.put(1, 1, 2, COBlocks.RESONANCE_EMITTER.getDefaultState().setValue(HorizontalDirectionalBlock.FACING, Direction.EAST));
-			b.put(1, 2, 2, COBlocks.RESONATOR.getDefaultState());
-			b.put(1, 3, 2, shaft(Axis.Y));
-			b.put(6, 1, 2, COBlocks.RESONANCE_RECEIVER.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.EAST));
-			b.put(7, 1, 2, shaft(Axis.X));
-			b.put(8, 1, 2, AllBlocks.COGWHEEL.getDefaultState().setValue(RotatedPillarKineticBlock.AXIS, Axis.X));
+		// Link A runs east along z=4 (blocked by the stone at x=4 mid-scene); link B runs south along x=3 and crosses it at (3,1,4).
+		map.put(COUPLER, plate(9, 5, 9, b -> {
+			b.put(1, 1, 4, COBlocks.RESONANCE_EMITTER.getDefaultState().setValue(HorizontalDirectionalBlock.FACING, Direction.EAST));
+			b.put(1, 2, 4, COBlocks.RESONATOR.getDefaultState());
+			b.put(1, 3, 4, shaft(Axis.Y));
+			b.put(6, 1, 4, COBlocks.RESONANCE_RECEIVER.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.EAST));
+			b.put(7, 1, 4, shaft(Axis.X));
+			b.put(8, 1, 4, AllBlocks.COGWHEEL.getDefaultState().setValue(RotatedPillarKineticBlock.AXIS, Axis.X));
+			b.put(4, 1, 4, Blocks.STONE.defaultBlockState());
+			b.put(3, 1, 1, COBlocks.RESONANCE_EMITTER.getDefaultState().setValue(HorizontalDirectionalBlock.FACING, Direction.SOUTH));
+			b.put(3, 2, 1, COBlocks.RESONATOR.getDefaultState());
+			b.put(3, 3, 1, shaft(Axis.Y));
+			b.put(3, 1, 7, COBlocks.RESONANCE_RECEIVER.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.SOUTH));
+			b.put(3, 1, 8, shaft(Axis.Z));
 		}));
 		map.put(PULVERISER, plate(7, 5, 5, b -> {
 			b.put(0, 2, 2, shaft(Axis.X));

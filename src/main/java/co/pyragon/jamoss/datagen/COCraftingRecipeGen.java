@@ -72,6 +72,17 @@ public class COCraftingRecipeGen extends RecipeProvider {
 			.unlockedBy("has_brass_casing", has(AllBlocks.BRASS_CASING.get()))
 			.save(out, id("resonance_emitter"));
 
+		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, COBlocks.RESONANCE_AMPLIFIER.get())
+			.pattern("QQQ")
+			.pattern("CRC")
+			.pattern("QBQ")
+			.define('Q', Items.QUARTZ_BLOCK)
+			.define('C', Items.COPPER_INGOT)
+			.define('R', COItems.ROUGH_QUARTZ_CRYSTAL.get())
+			.define('B', AllBlocks.BRASS_CASING.get())
+			.unlockedBy("has_rough_crystal", has(COItems.ROUGH_QUARTZ_CRYSTAL.get()))
+			.save(out, id("resonance_amplifier"));
+
 		ShapedRecipeBuilder.shaped(RecipeCategory.MISC, COBlocks.RESONANCE_RECEIVER.get())
 			.pattern("CQC")
 			.pattern(" B ")

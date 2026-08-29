@@ -43,6 +43,9 @@ public class COPonderScenes {
 		h.forComponents(COBlocks.RESONANCE_EMITTER, COBlocks.RESONANCE_RECEIVER)
 			.addStoryBoard(COPonderStructures.COUPLER, ResonatorScenes::coupler);
 
+		h.forComponents(COBlocks.RESONANCE_AMPLIFIER)
+			.addStoryBoard(COPonderStructures.AMPLIFIER, ResonatorScenes::amplifier);
+
 		h.forComponents(COBlocks.SONIC_PULVERISER)
 			.addStoryBoard(COPonderStructures.PULVERISER, ResonatorScenes::pulveriser);
 

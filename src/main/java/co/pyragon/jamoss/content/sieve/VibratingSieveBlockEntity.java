@@ -3,6 +3,7 @@ package co.pyragon.jamoss.content.sieve;
 import java.util.List;
 import java.util.Optional;
 
+import co.pyragon.jamoss.content.vibration.VibrationSource;
 import com.simibubi.create.content.kinetics.belt.behaviour.DirectBeltInputBehaviour;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -94,7 +95,7 @@ public class VibratingSieveBlockEntity extends SmartBlockEntity {
 			return;
 		}
 
-		float speed = getResonator().map(r -> Math.abs(r.getSpeed())).orElse(0f);
+		float speed = VibrationSource.speedAbove(level, worldPosition);
 		if (speed < MIN_SPEED)
 			speed = 0;
 		if (speed != driveSpeed) {

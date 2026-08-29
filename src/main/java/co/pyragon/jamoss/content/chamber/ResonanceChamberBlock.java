@@ -1,5 +1,6 @@
 package co.pyragon.jamoss.content.chamber;
 
+import co.pyragon.jamoss.content.vibration.VibrationSource;
 import com.simibubi.create.content.processing.basin.BasinBlock;
 import com.simibubi.create.content.processing.basin.BasinBlockEntity;
 
@@ -31,7 +32,7 @@ public class ResonanceChamberBlock extends BasinBlock {
 	@Override
 	public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
 		BlockEntity above = level.getBlockEntity(pos.above());
-		if (above instanceof ResonatorBlockEntity)
+		if (above instanceof VibrationSource)
 			return true;
 		return super.canSurvive(state, level, pos);
 	}

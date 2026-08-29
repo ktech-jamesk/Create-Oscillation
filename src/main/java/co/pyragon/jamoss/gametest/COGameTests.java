@@ -635,7 +635,206 @@ public class COGameTests {
 		return out;
 	}
 
+	@GameTest(template = "gametest/empty_8x6x8")
+	public static void couplerRangeByBand(GameTestHelper helper) {
+		int[] expected = { 8, 16, 32, 64 };
+		FrequencyBand[] bands = { FrequencyBand.LOW, FrequencyBand.MID, FrequencyBand.HIGH, FrequencyBand.ULTRASONIC };
+		for (int i = 0; i < bands.length; i++)
+			if (ResonanceEmitterBlockEntity.rangeFor(bands[i]) != expected[i])
+				helper.fail("Range for " + bands[i] + " is " + ResonanceEmitterBlockEntity.rangeFor(bands[i]));
+		helper.succeed();
+	}
+
+	// ---- resonance amplifier ----
+
+	@GameTest(template = "gametest/empty_8x6x8")
+	public static void amplifierLadderMaths(GameTestHelper helper) {
+		co.pyragon.jamoss.content.amplifier.CrystalLadder ladder = new co.pyragon.jamoss.content.amplifier.CrystalLadder(() -> {});
+		if (ladder.band() != null)
+			helper.fail("Empty ladder has a band");
+		ladder.setStackInSlot(2, COItems.TUNED_CRYSTAL_HIGH.asStack());
+		if (ladder.band() != null)
+			helper.fail("High alone has a band");
+		ladder.setStackInSlot(0, COItems.TUNED_CRYSTAL_LOW.asStack());
+		if (ladder.band() != FrequencyBand.LOW)
+			helper.fail("Low + High should be Low, got " + ladder.band());
+		ladder.setStackInSlot(1, COItems.TUNED_CRYSTAL_MID.asStack());
+		if (ladder.band() != FrequencyBand.HIGH)
+			helper.fail("Low + Mid + High should be High, got " + ladder.band());
+		ladder.setStackInSlot(3, COItems.TUNED_CRYSTAL_ULTRASONIC.asStack());
+		if (ladder.band() != FrequencyBand.ULTRASONIC)
+			helper.fail("Full ladder should be Ultrasonic, got " + ladder.band());
+		if (ladder.isItemValid(0, COItems.TUNED_CRYSTAL_MID.asStack()) || !ladder.isItemValid(1, COItems.TUNED_CRYSTAL_MID.asStack()))
+			helper.fail("Slots must only take their own band");
+		helper.succeed();
+	}
+
+	/** 16 RPM is below any band; a Low crystal in the amplifier turns it into Low and the mist recipe runs. */
+	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 400)
+	public static void amplifierPromotesSlowShaft(GameTestHelper helper) {
+		IFluidHandler tank = amplifierRig(helper, 16, COItems.TUNED_CRYSTAL_LOW.asStack());
+		BlockPos chamber = new BlockPos(2, 1, 3);
+		helper.succeedWhen(() -> {
+			if (!hasFluid(tank, COFluids.SONIC_MIST.get()))
+				helper.fail("No mist through the amplifier: " + fluids(helper, chamber), chamber);
+		});
+	}
+
+	/** A gap in the ladder caps the band at the gap: Low + High is still Low. */
+	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 200)
+	public static void amplifierGapCapsBand(GameTestHelper helper) {
+		amplifierRig(helper, 16, COItems.TUNED_CRYSTAL_LOW.asStack(), COItems.TUNED_CRYSTAL_HIGH.asStack());
+		ResonanceChamberBlockEntity chamber = (ResonanceChamberBlockEntity) helper.getBlockEntity(new BlockPos(2, 1, 3));
+		helper.runAfterDelay(20, () -> {
+			if (chamber.getBand() != FrequencyBand.LOW)
+				helper.fail("Expected Low from a Low+High ladder, got " + chamber.getBand(), new BlockPos(2, 1, 3));
+			helper.succeed();
+		});
+	}
+
+	/** The full ladder hands Ultrasonic to the chamber from a 16 RPM shaft. */
+	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 200)
+	public static void amplifierFullLadderIsUltrasonic(GameTestHelper helper) {
+		amplifierRig(helper, 16, COItems.TUNED_CRYSTAL_LOW.asStack(), COItems.TUNED_CRYSTAL_MID.asStack(),
+			COItems.TUNED_CRYSTAL_HIGH.asStack(), COItems.TUNED_CRYSTAL_ULTRASONIC.asStack());
+		ResonanceChamberBlockEntity chamber = (ResonanceChamberBlockEntity) helper.getBlockEntity(new BlockPos(2, 1, 3));
+		helper.runAfterDelay(20, () -> {
+			if (chamber.getBand() != FrequencyBand.ULTRASONIC)
+				helper.fail("Expected Ultrasonic, got " + chamber.getBand() + " drive=" + chamber.getDriveSpeed(), new BlockPos(2, 1, 3));
+			helper.succeed();
+		});
+	}
+
+	/** A High-band Resonator over a Low+Mid ladder overloads: nothing reaches the chamber. */
+	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 200)
+	public static void amplifierOverloads(GameTestHelper helper) {
+		amplifierRig(helper, 128, COItems.TUNED_CRYSTAL_LOW.asStack(), COItems.TUNED_CRYSTAL_MID.asStack());
+		BlockPos pos = new BlockPos(2, 2, 3);
+		ResonanceChamberBlockEntity chamber = (ResonanceChamberBlockEntity) helper.getBlockEntity(new BlockPos(2, 1, 3));
+		co.pyragon.jamoss.content.amplifier.ResonanceAmplifierBlockEntity amp = (co.pyragon.jamoss.content.amplifier.ResonanceAmplifierBlockEntity) helper.getBlockEntity(pos);
+		helper.runAfterDelay(20, () -> {
+			if (!amp.isOverloaded())
+				helper.fail("Amplifier not overloaded at 128 RPM over Low+Mid", pos);
+			if (chamber.getDriveSpeed() != 0)
+				helper.fail("Chamber still driven while overloaded: " + chamber.getDriveSpeed(), pos);
+			helper.succeed();
+		});
+	}
+
+	/** Matching input band is fine (Mid over Low+Mid); pulling the Mid crystal then overloads it. */
+	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 200)
+	public static void amplifierEqualBandPassesAndCrystalRemovalOverloads(GameTestHelper helper) {
+		amplifierRig(helper, 64, COItems.TUNED_CRYSTAL_LOW.asStack(), COItems.TUNED_CRYSTAL_MID.asStack());
+		BlockPos pos = new BlockPos(2, 2, 3);
+		ResonanceChamberBlockEntity chamber = (ResonanceChamberBlockEntity) helper.getBlockEntity(new BlockPos(2, 1, 3));
+		co.pyragon.jamoss.content.amplifier.ResonanceAmplifierBlockEntity amp = (co.pyragon.jamoss.content.amplifier.ResonanceAmplifierBlockEntity) helper.getBlockEntity(pos);
+		helper.runAfterDelay(20, () -> {
+			if (chamber.getBand() != FrequencyBand.MID)
+				helper.fail("Expected Mid, got " + chamber.getBand(), pos);
+			amp.crystals.setStackInSlot(1, ItemStack.EMPTY);
+		});
+		helper.runAfterDelay(40, () -> {
+			if (!amp.isOverloaded() || chamber.getDriveSpeed() != 0)
+				helper.fail("Mid input over a Low-only ladder should overload; band=" + chamber.getBand(), pos);
+			helper.succeed();
+		});
+	}
+
+	/** Hoppers may insert crystals (into the right slot) but never extract them. */
+	@GameTest(template = "gametest/empty_8x6x8")
+	public static void amplifierInventoryContract(GameTestHelper helper) {
+		amplifierRig(helper, 16);
+		BlockPos pos = new BlockPos(2, 2, 3);
+		IItemHandler handler = helper.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, helper.absolutePos(pos), null);
+		if (handler == null) {
+			helper.fail("Amplifier exposes no item handler", pos);
+			return;
+		}
+		ItemStack left = ItemHandlerHelper.insertItem(handler, COItems.TUNED_CRYSTAL_MID.asStack(), false);
+		if (!left.isEmpty() || !handler.getStackInSlot(1).is(COItems.TUNED_CRYSTAL_MID.get()))
+			helper.fail("Mid crystal did not land in slot 1", pos);
+		if (!ItemHandlerHelper.insertItem(handler, new ItemStack(Items.QUARTZ), true).is(Items.QUARTZ))
+			helper.fail("Amplifier accepted quartz", pos);
+		if (!handler.extractItem(1, 1, true).isEmpty())
+			helper.fail("Crystal could be extracted", pos);
+		helper.succeed();
+	}
+
+	/** Motor -> shaft -> resonator -> amplifier (with the given crystals) -> chamber with 250 mb water. */
+	private static IFluidHandler amplifierRig(GameTestHelper helper, int rpm, ItemStack... crystals) {
+		BlockPos motor = new BlockPos(2, 5, 3);
+		BlockPos shaft = new BlockPos(2, 4, 3);
+		BlockPos resonator = new BlockPos(2, 3, 3);
+		BlockPos amplifier = new BlockPos(2, 2, 3);
+		BlockPos chamber = new BlockPos(2, 1, 3);
+		helper.setBlock(chamber, COBlocks.RESONANCE_CHAMBER.getDefaultState().setValue(BasinBlock.FACING, Direction.DOWN));
+		helper.setBlock(amplifier, COBlocks.RESONANCE_AMPLIFIER.getDefaultState());
+		helper.setBlock(resonator, COBlocks.RESONATOR.getDefaultState());
+		helper.setBlock(shaft, AllBlocks.SHAFT.getDefaultState().setValue(RotatedPillarKineticBlock.AXIS, Direction.Axis.Y));
+		helper.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.DOWN));
+		if (!(helper.getBlockEntity(amplifier) instanceof co.pyragon.jamoss.content.amplifier.ResonanceAmplifierBlockEntity amp))
+			throw new IllegalStateException("Amplifier block entity missing");
+		for (ItemStack crystal : crystals)
+			amp.crystals.setStackInSlot(co.pyragon.jamoss.content.amplifier.CrystalLadder.slotOf(COItems.bandOf(crystal.getItem())), crystal);
+		IFluidHandler chamberTank = helper.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, helper.absolutePos(chamber), null);
+		if (chamberTank == null)
+			throw new IllegalStateException("Chamber exposes no fluid handler");
+		chamberTank.fill(new FluidStack(Fluids.WATER, 250), FluidAction.EXECUTE);
+		if (helper.getBlockEntity(motor) instanceof CreativeMotorBlockEntity motorBE)
+			motorBE.generatedSpeed.setValue(rpm);
+		else
+			helper.fail("Creative motor missing", motor);
+		return chamberTank;
+	}
+
 	// ---- sonic pulveriser ----
+
+	/**
+	 * Pulveriser riding a mechanical piston: piston (2,2,3) facing east with two poles behind it and a creative motor
+	 * above; the pulveriser (3,2,3) sits in front and is pushed two blocks east. Sand sits off the piston line (a
+	 * piston would push anything directly ahead) within the Mid tier's 3×3 layer. Verifies the contraption actor breaks
+	 * blocks while moving and that the burnt charge is written back to the block entity when the contraption disassembles.
+	 */
+	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 900)
+	public static void pulveriserOnPistonContraption(GameTestHelper helper) {
+		BlockPos motor = new BlockPos(2, 3, 3);
+		BlockPos piston = new BlockPos(2, 2, 3);
+		BlockPos pulveriser = new BlockPos(3, 2, 3);
+		BlockPos landing = new BlockPos(5, 2, 3);
+		for (int x = 0; x <= 1; x++)
+			helper.setBlock(new BlockPos(x, 2, 3), AllBlocks.PISTON_EXTENSION_POLE.getDefaultState()
+				.setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING, Direction.EAST));
+		helper.setBlock(piston, AllBlocks.MECHANICAL_PISTON.getDefaultState()
+			.setValue(DirectionalKineticBlock.FACING, Direction.EAST)
+			.setValue(com.simibubi.create.content.kinetics.base.DirectionalAxisKineticBlock.AXIS_ALONG_FIRST_COORDINATE, true));
+		helper.setBlock(pulveriser, COBlocks.SONIC_PULVERISER.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.EAST));
+		if (!(helper.getBlockEntity(pulveriser) instanceof SonicPulveriserBlockEntity be))
+			throw new IllegalStateException("Pulveriser block entity missing");
+		be.inventory.setStackInSlot(PulveriserInventory.CRYSTALS, COItems.TUNED_CRYSTAL_MID.asStack());
+		BlockPos[] sand = { new BlockPos(6, 3, 3), new BlockPos(7, 1, 3) };
+		for (BlockPos s : sand)
+			helper.setBlock(s, Blocks.STONE.defaultBlockState());
+		helper.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.DOWN));
+		if (helper.getBlockEntity(motor) instanceof CreativeMotorBlockEntity motorBE)
+			motorBE.generatedSpeed.setValue(8);
+		else
+			helper.fail("Creative motor missing", motor);
+		helper.succeedWhen(() -> {
+			for (BlockPos s : sand)
+				if (!helper.getBlockState(s).isAir())
+					helper.fail("Stone not broken by the moving pulveriser", s);
+			if (!(helper.getBlockEntity(landing) instanceof SonicPulveriserBlockEntity landed))
+				helper.fail("Pulveriser has not landed at the end of the stroke", landing);
+			else {
+				if (!landed.inventory.getStackInSlot(PulveriserInventory.CRYSTALS).isEmpty())
+					helper.fail("Crystal was not consumed on the contraption: " + landed.saveWithoutMetadata(helper.getLevel().registryAccess()), landing);
+				if (landed.getTier() == null || landed.getCharge() <= 0)
+					helper.fail("Burning charge was not written back on disassembly: tier=" + landed.getTier() + " charge=" + landed.getCharge(), landing);
+				if (landed.getCharge() >= 1024)
+					helper.fail("Charge was not spent: " + landed.getCharge(), landing);
+			}
+		});
+	}
 
 	/** Mid crystal: a 3x3 stone wall two blocks ahead is cleared. */
 	@GameTest(template = "gametest/empty_8x6x8", timeoutTicks = 300)

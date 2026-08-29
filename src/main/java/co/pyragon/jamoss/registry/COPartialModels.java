@@ -14,6 +14,7 @@ public class COPartialModels {
 	public static final PartialModel CHAMBER_BODY = block("resonance_chamber/body");
 	public static final PartialModel CHAMBER_BODY_DIRECTIONAL = block("resonance_chamber/body_directional");
 	public static final PartialModel CAVITATION_BODY = block("cavitation_chamber/body");
+	public static final PartialModel AMPLIFIER_BODY = block("resonance_amplifier/body");
 	public static final PartialModel PULVERISER_FORK = block("sonic_pulveriser/fork");
 	public static final PartialModel CAVITATION_BODY_DIRECTIONAL = block("cavitation_chamber/body_directional");
 

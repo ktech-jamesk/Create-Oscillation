@@ -1,0 +1,7 @@
+{
+	"variants": {
+		"": {
+			"model": "createoscillation:block/resonance_amplifier/block"
+		}
+	}
+}

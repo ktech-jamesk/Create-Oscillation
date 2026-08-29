@@ -29,6 +29,7 @@ public class COCreativeTabs {
 				output.accept(COBlocks.CAVITATION_CHAMBER.asStack());
 				output.accept(COBlocks.RESONANCE_EMITTER.asStack());
 				output.accept(COBlocks.RESONANCE_RECEIVER.asStack());
+				output.accept(COBlocks.RESONANCE_AMPLIFIER.asStack());
 				output.accept(COBlocks.SONIC_PULVERISER.asStack());
 				output.accept(COItems.ROUGH_QUARTZ_CRYSTAL.asStack());
 				output.accept(COItems.TUNED_CRYSTAL_LOW.asStack());

@@ -66,7 +66,14 @@ public class CreateOscillation {
 		REGISTRATE.addRawLang("createoscillation.gui.goggles.coupler.linked", "Linked to a receiver %s blocks away");
 		REGISTRATE.addRawLang("createoscillation.gui.goggles.coupler.searching", "Emitting, no receiver in reach");
 		REGISTRATE.addRawLang("createoscillation.gui.goggles.coupler.idle", "Idle");
+		REGISTRATE.addRawLang("createoscillation.gui.goggles.coupler.range", "Range: %s blocks");
+		REGISTRATE.addRawLang("createoscillation.recipe.coupling", "Resonance Coupling");
+		REGISTRATE.addRawLang("createoscillation.recipe.coupling.band", "Resonator must run in the %s band");
+		REGISTRATE.addRawLang("createoscillation.recipe.coupling.range", "Beam reaches %s blocks");
 		REGISTRATE.addRawLang("createoscillation.gui.goggles.coupler.receiving", "Receiving vibration");
+		REGISTRATE.addRawLang("createoscillation.gui.goggles.amplifier.crystals", "Crystals:");
+		REGISTRATE.addRawLang("createoscillation.gui.goggles.amplifier.amplifying", "Amplifying");
+		REGISTRATE.addRawLang("createoscillation.gui.goggles.amplifier.overloaded", "%s input exceeds crystal tuning");
 		REGISTRATE.addRawLang("createoscillation.gui.tuning_fork.band", "Tuned Frequency");
 		REGISTRATE.addRawLang("createoscillation.recipe.frequency", "Frequency: %s");
 		REGISTRATE.addRawLang("createoscillation.frequency.any", "Any");
@@ -99,6 +106,7 @@ public class CreateOscillation {
 		modEventBus.addListener(VentBlockEntity::registerCapabilities);
 		modEventBus.addListener(co.pyragon.jamoss.content.coupler.ResonanceEmitterBlockEntity::registerCapabilities);
 		modEventBus.addListener(co.pyragon.jamoss.content.coupler.ResonanceReceiverBlockEntity::registerCapabilities);
+		modEventBus.addListener(co.pyragon.jamoss.content.amplifier.ResonanceAmplifierBlockEntity::registerCapabilities);
 		modEventBus.addListener(co.pyragon.jamoss.content.pulveriser.SonicPulveriserBlockEntity::registerCapabilities);
 		modEventBus.addListener((RegisterCapabilitiesEvent event) -> GasCanisterItem.registerCapabilities(event, COItems.GAS_CANISTER.get()));
 		modEventBus.addListener(CODatagen::gatherData);

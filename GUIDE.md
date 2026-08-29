@@ -73,7 +73,7 @@ The nearest layer of blocks in front cracks together and shatters together; hard
 
 Put matching crystals in both, aim them at each other through open air, and rotation crosses the gap.
 
-- The **Emitter** sits under a Resonator and beams along its facing for up to 16 blocks while the Resonator runs in the crystal's band.
+- The **Emitter** sits under a Resonator and beams along its facing while the Resonator runs in the crystal's band. Range depends on the crystal: 8 (Low), 16 (Mid), 32 (High) or 64 (Ultrasonic) blocks.
 - The **Receiver** with the same crystal, dish toward the emitter, becomes a kinetic source turning its back-side shaft at that band's speed. Capacity scales with the crystal: Low 32, Mid 128, High 512, **Ultrasonic 2048 SU per RPM** — enough to run an entire build across the gap.
 - Anything solid in the way breaks the link within a few ticks. Crystals of different bands ignore each other, so several links can cross the same room.
 
@@ -135,5 +135,6 @@ Outputs come first, inputs second (Create's convention); `frequency` is `low` / 
 
 - **Create 6.0.10+** required (Registrate, Ponder and Flywheel come with it).
 - **JEI** optional: Resonating, Cavitating, Condensing and Sifting categories with the required band shown.
+- **KubeJS** optional: Add additional ores to the multiplication pipeline and Resonating, Cavitating, Condensing or Sifting recipes via JS
 
 Released under the MIT License. Some textures are recoloured from Create's, and the Resonance Pump reuses Create's mechanical pump geometry — thank you to the Creators of Create.

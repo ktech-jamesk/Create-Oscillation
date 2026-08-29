@@ -30,7 +30,8 @@ public class SonicPulveriserRenderer extends KineticBlockEntityRenderer<SonicPul
 	@Override
 	protected void renderSafe(SonicPulveriserBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
 		int light, int overlay) {
-		super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
+		// not super.renderSafe: the kinetic base skips drawing under Flywheel and this block has no visual
+		standardKineticRotationTransform(getRotatedModel(be, be.getBlockState()), be, light).renderInto(ms, buffer.getBuffer(RenderType.solid()));
 		FilteringRenderer.renderOnBlockEntity(be, partialTicks, ms, buffer, light, overlay);
 		float dx = 0, dz = 0;
 		if (be.isWorking()) {

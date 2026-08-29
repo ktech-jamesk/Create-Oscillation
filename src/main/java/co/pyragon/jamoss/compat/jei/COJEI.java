@@ -87,16 +87,20 @@ public class COJEI implements IModPlugin {
 	public void registerCategories(IRecipeCategoryRegistration registration) {
 		loadCategories();
 		registration.addRecipeCategories(categories.toArray(IRecipeCategory[]::new));
+		registration.addRecipeCategories(new CouplingCategory(registration.getJeiHelpers().getGuiHelper()));
 	}
 
 	@Override
 	public void registerRecipes(IRecipeRegistration registration) {
 		categories.forEach(c -> c.registerRecipes(registration));
+		registration.addRecipes(CouplingCategory.TYPE, CouplingCategory.entries());
 	}
 
 	@Override
 	public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
 		categories.forEach(c -> c.registerCatalysts(registration));
+		registration.addRecipeCatalyst(COBlocks.RESONANCE_EMITTER.asStack(), CouplingCategory.TYPE);
+		registration.addRecipeCatalyst(COBlocks.RESONANCE_RECEIVER.asStack(), CouplingCategory.TYPE);
 	}
 
 	// ---- per-metal variants of the generic ore-chain ingredients ----
@@ -165,6 +169,52 @@ public class COJEI implements IModPlugin {
 		ingredients.removeIngredientsAtRuntime(NeoForgeTypes.FLUID_STACK, List.of(
 			new FluidStack((net.minecraft.world.level.material.Fluid) COFluids.ORE_SLURRY.getSource(), 1000),
 			new FluidStack((net.minecraft.world.level.material.Fluid) COFluids.METAL_VAPOUR.getSource(), 1000)));
+		fixCanisterRecipes(runtime.getRecipeManager());
+	}
+
+	/**
+	 * Create's Item Drain category lists the *input* stack as the emptied container when the container keeps its
+	 * item type (fine for buckets, wrong for canisters), and its Spout category skips such containers entirely.
+	 * Replace the drain entries with ones that output an empty canister and add the matching spout fillings.
+	 */
+	private static void fixCanisterRecipes(mezz.jei.api.recipe.IRecipeManager recipes) {
+		net.minecraft.world.item.Item canister = COItems.GAS_CANISTER.get();
+		mezz.jei.api.recipe.RecipeType<net.minecraft.world.item.crafting.RecipeHolder<com.simibubi.create.content.fluids.transfer.EmptyingRecipe>> draining =
+			mezz.jei.api.recipe.RecipeType.createRecipeHolderType(com.simibubi.create.Create.asResource("draining"));
+		mezz.jei.api.recipe.RecipeType<net.minecraft.world.item.crafting.RecipeHolder<com.simibubi.create.content.fluids.transfer.FillingRecipe>> filling =
+			mezz.jei.api.recipe.RecipeType.createRecipeHolderType(com.simibubi.create.Create.asResource("spout_filling"));
+
+		List<net.minecraft.world.item.crafting.RecipeHolder<com.simibubi.create.content.fluids.transfer.EmptyingRecipe>> wrong =
+			recipes.createRecipeLookup(draining).includeHidden().get()
+				.filter(h -> h.value().getIngredients().stream().anyMatch(i -> java.util.Arrays.stream(i.getItems()).anyMatch(s -> s.is(canister))))
+				.toList();
+		if (!wrong.isEmpty())
+			recipes.hideRecipes(draining, wrong);
+
+		List<net.minecraft.world.item.crafting.RecipeHolder<com.simibubi.create.content.fluids.transfer.EmptyingRecipe>> drains = new ArrayList<>();
+		List<net.minecraft.world.item.crafting.RecipeHolder<com.simibubi.create.content.fluids.transfer.FillingRecipe>> fills = new ArrayList<>();
+		for (ItemStack full : GasCanisterItem.allFilled(canister)) {
+			FluidStack gas = GasCanisterItem.getContent(full);
+			String metal = MetalStacks.metal(gas);
+			String suffix = net.neoforged.neoforge.registries.NeoForgeRegistries.FLUID_TYPES.getKey(gas.getFluidType()).getPath() + (metal == null ? "" : "_" + metal);
+			ResourceLocation drainId = CreateOscillation.asResource("empty_canister_of_" + suffix);
+			drains.add(new net.minecraft.world.item.crafting.RecipeHolder<>(drainId,
+				new com.simibubi.create.content.processing.recipe.StandardProcessingRecipe.Builder<>(com.simibubi.create.content.fluids.transfer.EmptyingRecipe::new, drainId)
+					.withItemIngredients(net.minecraft.world.item.crafting.Ingredient.of(full))
+					.withFluidOutputs(gas.copy())
+					.withSingleItemOutput(new ItemStack(canister))
+					.build()));
+			ResourceLocation fillId = CreateOscillation.asResource("fill_canister_with_" + suffix);
+			fills.add(new net.minecraft.world.item.crafting.RecipeHolder<>(fillId,
+				new com.simibubi.create.content.processing.recipe.StandardProcessingRecipe.Builder<>(com.simibubi.create.content.fluids.transfer.FillingRecipe::new, fillId)
+					.withItemIngredients(net.minecraft.world.item.crafting.Ingredient.of(new ItemStack(canister)))
+					.withFluidIngredients(new net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient(
+						net.neoforged.neoforge.fluids.crafting.DataComponentFluidIngredient.of(false, gas.copy()), gas.getAmount()))
+					.withSingleItemOutput(full.copy())
+					.build()));
+		}
+		recipes.addRecipes(draining, drains);
+		recipes.addRecipes(filling, fills);
 	}
 
 	/** One slurry, vapour and concentrate entry per metal in the ingredient list. */

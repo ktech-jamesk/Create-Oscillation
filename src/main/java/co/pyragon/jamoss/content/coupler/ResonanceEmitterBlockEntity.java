@@ -3,6 +3,7 @@ package co.pyragon.jamoss.content.coupler;
 import java.util.List;
 import java.util.Optional;
 
+import co.pyragon.jamoss.content.vibration.VibrationSource;
 import org.jetbrains.annotations.Nullable;
 
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
@@ -30,7 +31,16 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
 public class ResonanceEmitterBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
 
-	public static final int RANGE = 16;
+	/** Beam length by crystal band: 8 / 16 / 32 / 64 blocks. */
+	public static int rangeFor(FrequencyBand band) {
+		return switch (band) {
+			case LOW -> 8;
+			case MID -> 16;
+			case HIGH -> 32;
+			case ULTRASONIC -> 64;
+			default -> 0;
+		};
+	}
 
 	public final CrystalSlot crystal = new CrystalSlot(this::onCrystalChanged);
 	/** Distance to the linked receiver (blocks), 0 when not linked. Synced for the beam particles. */
@@ -75,7 +85,7 @@ public class ResonanceEmitterBlockEntity extends SmartBlockEntity implements IHa
 		FrequencyBand band = getBand();
 		if (band == null)
 			return null;
-		float speed = getResonator().map(r -> Math.abs(r.getSpeed())).orElse(0f);
+		float speed = VibrationSource.speedAbove(level, worldPosition);
 		return band == FrequencyBand.of(speed) ? band : null;
 	}
 
@@ -103,8 +113,11 @@ public class ResonanceEmitterBlockEntity extends SmartBlockEntity implements IHa
 		if (band != null) {
 			Direction facing = getFacing();
 			BlockPos.MutableBlockPos cursor = worldPosition.mutable();
-			for (int i = 1; i <= RANGE; i++) {
+			int range = rangeFor(band);
+			for (int i = 1; i <= range; i++) {
 				cursor.move(facing);
+				if (!level.isLoaded(cursor))
+					break;
 				BlockState state = level.getBlockState(cursor);
 				if (state.isAir() || state.getCollisionShape(level, cursor).isEmpty())
 					continue;
@@ -158,6 +171,8 @@ public class ResonanceEmitterBlockEntity extends SmartBlockEntity implements IHa
 			? new LangBuilder(CreateOscillation.MOD_ID).translate("gui.goggles.coupler.no_crystal").style(ChatFormatting.DARK_GRAY)
 			: new LangBuilder(CreateOscillation.MOD_ID).translate("frequency." + band.getSerializedName()).style(ChatFormatting.AQUA);
 		new LangBuilder(CreateOscillation.MOD_ID).translate("gui.goggles.tuning_fork").style(ChatFormatting.GRAY).space().add(value).forGoggles(tooltip);
+		if (band != null)
+			new LangBuilder(CreateOscillation.MOD_ID).translate("gui.goggles.coupler.range", rangeFor(band)).style(ChatFormatting.GRAY).forGoggles(tooltip);
 		String key = isLinked() ? "gui.goggles.coupler.linked" : getEmittedBand() != null ? "gui.goggles.coupler.searching" : "gui.goggles.coupler.idle";
 		new LangBuilder(CreateOscillation.MOD_ID).translate(key, linkDistance)
 			.style(isLinked() ? ChatFormatting.GREEN : ChatFormatting.GRAY).forGoggles(tooltip);

@@ -5,6 +5,7 @@ import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import co.pyragon.jamoss.content.chamber.ResonanceChamberBlockEntity;
 import co.pyragon.jamoss.content.frequency.FrequencyBand;
 import co.pyragon.jamoss.content.tuningfork.TuningForkBlockEntity;
+import co.pyragon.jamoss.content.amplifier.ResonanceAmplifierBlockEntity;
 import co.pyragon.jamoss.content.coupler.ResonanceEmitterBlockEntity;
 import co.pyragon.jamoss.content.coupler.ResonanceReceiverBlockEntity;
 import co.pyragon.jamoss.content.pulveriser.SonicPulveriserBlockEntity;
@@ -287,13 +288,14 @@ public class ResonatorScenes {
 		scene.world().showSection(util.select().layer(0), Direction.UP);
 		scene.idle(5);
 
-		BlockPos emitter = util.grid().at(1, 1, 2);
-		BlockPos resonator = util.grid().at(1, 2, 2);
-		BlockPos receiver = util.grid().at(6, 1, 2);
-		Selection drive = util.select().fromTo(1, 2, 2, 1, 3, 2);
-		Selection output = util.select().fromTo(6, 1, 2, 8, 1, 2);
+		BlockPos emitter = util.grid().at(1, 1, 4);
+		BlockPos resonator = util.grid().at(1, 2, 4);
+		BlockPos receiver = util.grid().at(6, 1, 4);
+		BlockPos stone = util.grid().at(4, 1, 4);
+		Selection drive = util.select().fromTo(1, 2, 4, 1, 3, 4);
+		Selection output = util.select().fromTo(6, 1, 4, 8, 1, 4);
 
-		scene.world().showSection(util.select().fromTo(1, 1, 2, 1, 3, 2), Direction.DOWN);
+		scene.world().showSection(util.select().fromTo(1, 1, 4, 1, 3, 4), Direction.DOWN);
 		scene.idle(10);
 		scene.world().setKineticSpeed(drive, 64);
 		scene.overlay().showText(80)
@@ -323,7 +325,7 @@ public class ResonatorScenes {
 			.withItem(COItems.TUNED_CRYSTAL_MID.asStack());
 		scene.idle(20);
 		scene.world().setKineticSpeed(output, 64);
-		scene.effects().rotationSpeedIndicator(util.grid().at(7, 1, 2));
+		scene.effects().rotationSpeedIndicator(util.grid().at(7, 1, 4));
 		scene.overlay().showText(90)
 			.attachKeyFrame()
 			.colored(PonderPalette.GREEN)
@@ -332,29 +334,117 @@ public class ResonatorScenes {
 			.placeNearTarget();
 		scene.idle(100);
 
-		scene.world().setBlock(util.grid().at(4, 1, 2), net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), true);
+		scene.world().showSection(util.select().position(stone), Direction.DOWN);
 		scene.world().setKineticSpeed(output, 0);
 		scene.idle(10);
 		scene.overlay().showText(80)
 			.attachKeyFrame()
 			.colored(PonderPalette.RED)
-			.text("Anything solid in the way breaks the link; range is 16 blocks")
-			.pointAt(util.vector().blockSurface(util.grid().at(4, 1, 2), Direction.NORTH))
+			.text("Anything solid in the way breaks the link; range grows with the crystal: 8, 16, 32 or 64 blocks")
+			.pointAt(util.vector().blockSurface(stone, Direction.NORTH))
 			.placeNearTarget();
 		scene.idle(90);
 
-		scene.world().destroyBlock(util.grid().at(4, 1, 2));
+		scene.world().destroyBlock(stone);
 		scene.world().setKineticSpeed(output, 64);
 		scene.idle(10);
-		scene.overlay().showText(80)
+
+		// second link, High crystals, running south along x=3 and crossing the first beam at (3,1,4)
+		BlockPos emitter2 = util.grid().at(3, 1, 1);
+		BlockPos receiver2 = util.grid().at(3, 1, 7);
+		Selection drive2 = util.select().fromTo(3, 2, 1, 3, 3, 1);
+		Selection output2 = util.select().fromTo(3, 1, 7, 3, 1, 8);
+		scene.world().showSection(util.select().fromTo(3, 1, 1, 3, 3, 1), Direction.DOWN);
+		scene.world().showSection(output2, Direction.DOWN);
+		scene.idle(10);
+		scene.world().modifyBlockEntity(emitter2, ResonanceEmitterBlockEntity.class,
+			be -> be.crystal.setStackInSlot(0, COItems.TUNED_CRYSTAL_HIGH.asStack()));
+		scene.world().modifyBlockEntity(receiver2, ResonanceReceiverBlockEntity.class,
+			be -> be.crystal.setStackInSlot(0, COItems.TUNED_CRYSTAL_HIGH.asStack()));
+		scene.overlay().showControls(util.vector().blockSurface(emitter2, Direction.WEST), Pointing.DOWN, 30)
+			.withItem(COItems.TUNED_CRYSTAL_HIGH.asStack());
+		scene.idle(10);
+		scene.world().setKineticSpeed(drive2, 128);
+		scene.world().setKineticSpeed(output2, 128);
+		scene.effects().rotationSpeedIndicator(util.grid().at(3, 1, 8));
+		scene.idle(10);
+		scene.overlay().showText(90)
+			.attachKeyFrame()
 			.text("Crystals of different bands ignore each other, so several links can cross the same room")
-			.pointAt(util.vector().blockSurface(receiver, Direction.NORTH))
+			.pointAt(util.vector().centerOf(util.grid().at(3, 1, 4)))
 			.placeNearTarget();
-		scene.idle(90);
+		scene.idle(100);
 		scene.markAsFinished();
 	}
 
-	/** Structure "pulveriser": shaft (0,2,2) → pulveriser (1,2,2) east; stone wall x 3..4, y 1..3, z 1..3 with ore and cobble. */
+	public static void amplifier(SceneBuilder builder, SceneBuildingUtil util) {
+		CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+		scene.title("amplifier", "Raising a frequency with the Resonance Amplifier");
+		scene.configureBasePlate(0, 0, 5);
+		scene.world().showSection(util.select().layer(0), Direction.UP);
+		scene.idle(5);
+
+		BlockPos chamber = util.grid().at(2, 1, 2);
+		BlockPos amplifier = util.grid().at(2, 2, 2);
+		BlockPos resonator = util.grid().at(2, 3, 2);
+		BlockPos shaft = util.grid().at(2, 4, 2);
+		Selection kinetic = util.select().fromTo(2, 3, 2, 2, 4, 2);
+
+		scene.world().showSection(util.select().position(chamber), Direction.DOWN);
+		scene.idle(5);
+		scene.world().showSection(util.select().position(amplifier), Direction.DOWN);
+		scene.idle(5);
+		scene.world().showSection(kinetic, Direction.DOWN);
+		scene.idle(10);
+		scene.world().setKineticSpeed(kinetic, 16);
+		scene.effects().rotationSpeedIndicator(shaft);
+		scene.idle(10);
+		scene.overlay().showText(80)
+			.attachKeyFrame()
+			.text("At 16 RPM the Resonator is below the Low band and nothing beneath it would run")
+			.pointAt(util.vector().blockSurface(resonator, Direction.WEST))
+			.placeNearTarget();
+		scene.idle(90);
+
+		scene.overlay().showText(80)
+			.attachKeyFrame()
+			.text("The Resonance Amplifier sits between the Resonator and the machine and holds Tuned Crystals")
+			.pointAt(util.vector().blockSurface(amplifier, Direction.WEST))
+			.placeNearTarget();
+		scene.idle(90);
+
+		scene.overlay().showControls(util.vector().blockSurface(amplifier, Direction.WEST), Pointing.LEFT, 30).rightClick().withItem(COItems.TUNED_CRYSTAL_LOW.asStack());
+		scene.world().modifyBlockEntity(amplifier, ResonanceAmplifierBlockEntity.class, be -> be.crystals.setStackInSlot(0, COItems.TUNED_CRYSTAL_LOW.asStack()));
+		scene.idle(10);
+		scene.overlay().showText(80)
+			.colored(PonderPalette.GREEN)
+			.text("With a Low-Tuned Crystal inside, any spin at all is passed down as the Low band")
+			.pointAt(util.vector().blockSurface(chamber, Direction.WEST))
+			.placeNearTarget();
+		scene.idle(90);
+
+		scene.overlay().showControls(util.vector().blockSurface(amplifier, Direction.WEST), Pointing.LEFT, 30).rightClick().withItem(COItems.TUNED_CRYSTAL_MID.asStack());
+		scene.world().modifyBlockEntity(amplifier, ResonanceAmplifierBlockEntity.class, be -> be.crystals.setStackInSlot(1, COItems.TUNED_CRYSTAL_MID.asStack()));
+		scene.idle(10);
+		scene.overlay().showText(90)
+			.attachKeyFrame()
+			.text("Each higher band needs every crystal below it as well: Low and Mid together reach Mid")
+			.pointAt(util.vector().blockSurface(amplifier, Direction.WEST))
+			.placeNearTarget();
+		scene.idle(100);
+
+		scene.world().setKineticSpeed(kinetic, 128);
+		scene.effects().rotationSpeedIndicator(shaft);
+		scene.idle(10);
+		scene.overlay().showText(90)
+			.attachKeyFrame()
+			.colored(PonderPalette.RED)
+			.text("If the Resonator's own band is higher than the crystals can reach, the Amplifier overloads and stops")
+			.pointAt(util.vector().blockSurface(amplifier, Direction.WEST))
+			.placeNearTarget();
+		scene.idle(100);
+	}
+
 	public static void pulveriser(SceneBuilder builder, SceneBuildingUtil util) {
 		CreateSceneBuilder scene = new CreateSceneBuilder(builder);
 		scene.title("sonic_pulveriser", "Breaking blocks with the Sonic Pulveriser");

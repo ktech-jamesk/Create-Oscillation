@@ -20,7 +20,12 @@ import net.minecraft.world.phys.AABB;
  * A vibration source. It only spins; whatever sits directly below it (a Resonance Chamber, a
  * Vibrating Sieve, ...) reads this block's speed and does its own work.
  */
-public class ResonatorBlockEntity extends KineticBlockEntity {
+public class ResonatorBlockEntity extends KineticBlockEntity implements co.pyragon.jamoss.content.vibration.VibrationSource {
+
+	@Override
+	public float getVibrationSpeed() {
+		return getSpeed();
+	}
 
 	public ResonatorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
@@ -37,6 +42,8 @@ public class ResonatorBlockEntity extends KineticBlockEntity {
 			return sieve.isShaking();
 		if (below instanceof co.pyragon.jamoss.content.coupler.ResonanceEmitterBlockEntity emitter)
 			return emitter.isLinked();
+		if (below instanceof co.pyragon.jamoss.content.amplifier.ResonanceAmplifierBlockEntity amplifier)
+			return amplifier.isWorking();
 		return false;
 	}
 

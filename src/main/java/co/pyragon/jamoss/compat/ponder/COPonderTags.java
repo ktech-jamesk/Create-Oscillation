@@ -34,6 +34,7 @@ public class COPonderTags {
 			.add(COBlocks.CAVITATION_CHAMBER)
 			.add(COBlocks.RESONANCE_EMITTER)
 			.add(COBlocks.RESONANCE_RECEIVER)
+			.add(COBlocks.RESONANCE_AMPLIFIER)
 			.add(COBlocks.SONIC_PULVERISER)
 			.add(COItems.ROUGH_QUARTZ_CRYSTAL)
 			.add(COItems.GAS_CANISTER);

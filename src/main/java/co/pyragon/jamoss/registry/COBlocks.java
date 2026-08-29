@@ -163,6 +163,20 @@ public class COBlocks {
 		.build()
 		.register();
 
+	public static final BlockEntry<co.pyragon.jamoss.content.amplifier.ResonanceAmplifierBlock> RESONANCE_AMPLIFIER = CreateOscillation.REGISTRATE
+		.block("resonance_amplifier", co.pyragon.jamoss.content.amplifier.ResonanceAmplifierBlock::new)
+		.initialProperties(SharedProperties::stone)
+		.properties(p -> p.noOcclusion()
+			.mapColor(MapColor.TERRACOTTA_YELLOW))
+		.transform(pickaxeOnly())
+		.blockstate(NonNullBiConsumer.noop())
+		.addLayer(() -> RenderType::cutoutMipped)
+		.lang("Resonance Amplifier")
+		.item()
+		.model(NonNullBiConsumer.noop())
+		.build()
+		.register();
+
 	public static final BlockEntry<ResonanceReceiverBlock> RESONANCE_RECEIVER = CreateOscillation.REGISTRATE
 		.block("resonance_receiver", ResonanceReceiverBlock::new)
 		.initialProperties(SharedProperties::stone)

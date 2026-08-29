@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "create:brass_casing"
+    },
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "Q": {
+      "item": "minecraft:quartz_block"
+    },
+    "R": {
+      "item": "createoscillation:rough_quartz_crystal"
+    }
+  },
+  "pattern": [
+    "QQQ",
+    "CRC",
+    "QBQ"
+  ],
+  "result": {
+    "count": 1,
+    "id": "createoscillation:resonance_amplifier"
+  }
+}

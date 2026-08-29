@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.2.0
+
+- **Resonance Amplifier.** Sits between a Resonator and the machine below it and re-emits the vibration at the band its
+  crystal ladder reaches: a Low-Tuned Crystal alone gives Low (even from a shaft slower than 32 RPM), Low + Mid gives Mid,
+  and so on up to Ultrasonic with all four. A gap in the ladder caps the band below it. If the Resonator itself already
+  runs in a higher band than the ladder reaches, the Amplifier overloads and passes nothing. Right-click with a crystal to
+  seat it, empty hand to take the top one back; hoppers/funnels can feed it. Goggles, Ponder scene and recipe included.
+- Internal: Chamber, Sieve and Emitter now read any `VibrationSource` above them (Resonator or Amplifier).
+- **Resonance Coupler range now depends on the crystal:** 8 (Low), 16 (Mid), 32 (High), 64 (Ultrasonic) blocks. Goggles on
+  the Emitter show the range; the beam scan stops at unloaded chunks.
+- JEI: new *Resonance Coupling* page (per crystal: band the Resonator must run in, beam range); Condensing recipes laid
+  out in one row with the Condenser above; Gas Canister drain entries now output an empty canister and Spout filling
+  entries exist for every gas.
+- Receiver model: the output half-shaft now protrudes from the back so the connection side is visible.
+- Ponder: the coupler scene's blocking stone now actually appears.
+
 ## 1.1.0
 
 - **Breaking:** the Steam fluid is now **Sonic Mist** (`createoscillation:sonic_mist`, was `createoscillation:steam`).

@@ -80,6 +80,13 @@ public class COBlockEntityTypes {
 	public static final BlockEntityEntry<ResonanceEmitterBlockEntity> RESONANCE_EMITTER = CreateOscillation.REGISTRATE
 		.blockEntity("resonance_emitter", ResonanceEmitterBlockEntity::new)
 		.validBlocks(COBlocks.RESONANCE_EMITTER)
+		.renderer(() -> co.pyragon.jamoss.content.coupler.ResonanceEmitterRenderer::new)
+		.register();
+
+	public static final BlockEntityEntry<co.pyragon.jamoss.content.amplifier.ResonanceAmplifierBlockEntity> RESONANCE_AMPLIFIER = CreateOscillation.REGISTRATE
+		.blockEntity("resonance_amplifier", co.pyragon.jamoss.content.amplifier.ResonanceAmplifierBlockEntity::new)
+		.validBlocks(COBlocks.RESONANCE_AMPLIFIER)
+		.renderer(() -> co.pyragon.jamoss.content.amplifier.ResonanceAmplifierRenderer::new)
 		.register();
 
 	public static final BlockEntityEntry<ResonanceReceiverBlockEntity> RESONANCE_RECEIVER = CreateOscillation.REGISTRATE

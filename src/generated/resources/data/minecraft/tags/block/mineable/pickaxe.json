@@ -9,6 +9,7 @@
     "createoscillation:tuning_fork",
     "createoscillation:cavitation_chamber",
     "createoscillation:resonance_emitter",
+    "createoscillation:resonance_amplifier",
     "createoscillation:resonance_receiver",
     "createoscillation:sonic_pulveriser"
   ]
